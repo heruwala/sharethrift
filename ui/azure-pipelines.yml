@@ -26,16 +26,24 @@ steps:
   displayName: 'npm install and build'
   workingDirectory: ui
 
-- task: AzureFileCopy@4
+
+
+
+- task: AzureCLI@2
+  displayName: Az File Copy to Storage
   inputs:
-    SourcePath: 'ui/dist/*'
-    azureSubscription: 'Visual Studio Enterprise(1e23aa72-fb0d-424b-a48c-0de4916aee72)'
-    Destination: 'AzureBlob'
-    storage: 'sharethrift'
-    ContainerName: '$web'
+    azureSubscription: $(azureSubscription)
+    scriptType: 'batch'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      az storage blob upload-batch \
+                --destination \$web \
+                --account-name "$(storageAccountName)" \
+                --source "ui/dist"
+
 
 - task: AzurePowerShell@5
   inputs:
-    azureSubscription: 'Visual Studio Enterprise(1e23aa72-fb0d-424b-a48c-0de4916aee72)'
+    azureSubscription: $(azureSubscription)
     ScriptType: 'InlineScript'
-    Inline: 'cdn endpoint purge --profile-name sharethrift -g PWP-ResourceGroup -n rg-sharethrif --content-paths "/*"'
+    Inline: 'cdn endpoint purge --profile-name sharethrift -g PWP-ResourceGroup -n rg-sharethrift --content-paths "/*"'
