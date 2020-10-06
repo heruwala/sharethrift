@@ -27,13 +27,11 @@ steps:
   workingDirectory: ui
 
 
-
-
 - task: AzureCLI@2
   displayName: Az File Copy to Storage
   inputs:
-    azureSubscription: $(azureSubscription)
-    scriptType: 'batch'
+    azureSubscription: '$(azureSubscription)'
+    scriptType: 'ps'
     scriptLocation: 'inlineScript'
     inlineScript: |
       az storage blob upload-batch \
