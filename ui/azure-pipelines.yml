@@ -33,11 +33,7 @@ steps:
     azureSubscription: '$(azureSubscription)'
     scriptType: 'pscore'
     scriptLocation: 'inlineScript'
-    inlineScript: |
-      az storage blob upload-batch 
-        --destination $web
-        --account-name "$(storageAccountName)" 
-        --source "ui/dist"
+    inlineScript: 'az storage blob upload-batch --destination $web --account-name "$(storageAccountName)" --source "ui/dist"'
 - task: AzurePowerShell@5
   inputs:
     azureSubscription: '$(azureSubscription)'
