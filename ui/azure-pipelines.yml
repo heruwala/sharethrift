@@ -32,9 +32,10 @@ steps:
   workingDirectory: ui
 
 - task: AzureCLI@2
+  displayName: Copy to Blob
   inputs:
     azureSubscription: 'Visual Studio Enterprise(1e23aa72-fb0d-424b-a48c-0de4916aee72)'
-    scriptType: 'batch'
+    scriptType: 'pscore'
     scriptLocation: 'inlineScript'
     inlineScript: 'az storage blob upload-batch --destination "$web" --account-name "$(storageAccountName)" --source "ui/dist"'
     workingDirectory: 'ui/dist'
