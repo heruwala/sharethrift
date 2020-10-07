@@ -37,19 +37,8 @@ steps:
     azureSubscription: 'Visual Studio Enterprise(1e23aa72-fb0d-424b-a48c-0de4916aee72)'
     scriptType: 'pscore'
     scriptLocation: 'inlineScript'
-    inlineScript: 'az storage blob upload-batch --destination `$web --account-name sharethrift --source . --auth-mode login'
+    inlineScript: |
+      az storage blob upload-batch --destination `$web --account-name sharethrift --source . --auth-mode login
+      az cdn endpoint purge --profile-name sharethrift -g rg-sharethrift -n sharethrift --content-paths "/*"
     addSpnToEnvironment: true
     workingDirectory: 'ui/build'
-
-- task: AzurePowerShell@5
-  displayName: Purge CDN
-  inputs:
-    azureSubscription: '$(azureSubscription)'
-    ScriptType: 'InlineScript'
-    Inline: 'cdn endpoint purge --profile-name sharethrift -g PWP-ResourceGroup -n rg-sharethrift --content-paths "/*"'
-
-- task: AzurePowerShell@5
-  inputs:
-    azureSubscription: $(azureSubscription)
-    ScriptType: 'InlineScript'
-    Inline: 'cdn endpoint purge --profile-name sharethrift -g PWP-ResourceGroup -n rg-sharethrift --content-paths "/*"'
