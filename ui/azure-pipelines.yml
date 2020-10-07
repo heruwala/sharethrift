@@ -30,6 +30,8 @@ steps:
     npm run build
   displayName: 'npm install and build'
   workingDirectory: ui
+  env:
+    INLINE_RUNTIME_CHUNK: false
 
 - task: AzureCLI@2
   displayName: Copy to Blob
