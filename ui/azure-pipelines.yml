@@ -38,7 +38,10 @@ steps:
     scriptType: 'pscore'
     scriptLocation: 'inlineScript'
     inlineScript: |
-      az storage blob upload-batch --destination \$web --account-name "$(storageAccountName)" --source "./build"
+      az storage blob upload-batch \
+        --destination \$web \
+        --account-name "$(storageAccountName)" \
+        --source "./build"
     workingDirectory: 'ui'
 
 - task: AzurePowerShell@5
