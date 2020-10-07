@@ -31,13 +31,18 @@ steps:
   displayName: Az File Copy to Storage
   inputs:
     azureSubscription: '$(azureSubscription)'
-    scriptType: 'ps'
+    scriptType: 'pscore'
     scriptLocation: 'inlineScript'
     inlineScript: |
       az storage blob upload-batch \
                 --destination \$web \
                 --account-name "$(storageAccountName)" \
                 --source "ui/dist"
+- task: AzurePowerShell@5
+  inputs:
+    azureSubscription: '$(azureSubscription)'
+    ScriptType: 'InlineScript'
+    Inline: 'cdn endpoint purge --profile-name sharethrift -g PWP-ResourceGroup -n rg-sharethrift --content-paths "/*"'
 
 
 - task: AzurePowerShell@5
