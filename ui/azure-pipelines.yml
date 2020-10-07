@@ -11,6 +11,11 @@ trigger:
    include:
      - main
 
+pr: none
+  
+variables:
+    system.debug: true
+
 pool:
   vmImage: 'ubuntu-latest'
 
@@ -26,20 +31,19 @@ steps:
   displayName: 'npm install and build'
   workingDirectory: ui
 
-
-- task: AzureCLI@2
+- task: AzurePowerShell@5
   displayName: Az File Copy to Storage
   inputs:
     azureSubscription: '$(azureSubscription)'
-    scriptType: 'pscore'
-    scriptLocation: 'inlineScript'
-    inlineScript: 'az storage blob upload-batch --destination $web --account-name "$(storageAccountName)" --source "ui/dist"'
+    ScriptType: 'InlineScript'
+    Inline: 'az storage blob upload-batch --destination "$web" --account-name "$(storageAccountName)" --source "ui/dist"'
+
 - task: AzurePowerShell@5
+  displayName: Purge CDN
   inputs:
     azureSubscription: '$(azureSubscription)'
     ScriptType: 'InlineScript'
     Inline: 'cdn endpoint purge --profile-name sharethrift -g PWP-ResourceGroup -n rg-sharethrift --content-paths "/*"'
-
 
 - task: AzurePowerShell@5
   inputs:
