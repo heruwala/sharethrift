@@ -37,7 +37,7 @@ steps:
     azureSubscription: 'Visual Studio Enterprise(1e23aa72-fb0d-424b-a48c-0de4916aee72)'
     scriptType: 'pscore'
     scriptLocation: 'inlineScript'
-    inlineScript: 'az storage blob upload-batch --destination "$web" --account-name sharethrift --source . --auth-mode login'
+    inlineScript: 'az storage blob upload-batch --destination `$web --account-name sharethrift --source . --auth-mode login'
     addSpnToEnvironment: true
     workingDirectory: 'ui/build'
 
