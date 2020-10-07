@@ -31,12 +31,13 @@ steps:
   displayName: 'npm install and build'
   workingDirectory: ui
 
-- task: AzurePowerShell@5
-  displayName: Az File Copy to Storage
+- task: AzureCLI@2
   inputs:
-    azureSubscription: '$(azureSubscription)'
-    ScriptType: 'InlineScript'
-    Inline: 'az storage blob upload-batch --destination "$web" --account-name "$(storageAccountName)" --source "ui/dist"'
+    azureSubscription: 'Visual Studio Enterprise(1e23aa72-fb0d-424b-a48c-0de4916aee72)'
+    scriptType: 'batch'
+    scriptLocation: 'inlineScript'
+    inlineScript: 'az storage blob upload-batch --destination "$web" --account-name "$(storageAccountName)" --source "ui/dist"'
+    workingDirectory: 'ui/dist'
 
 - task: AzurePowerShell@5
   displayName: Purge CDN
