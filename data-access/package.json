@@ -19,6 +19,8 @@
   "dependencies": {
     "@types/node": "^14.11.2",
     "apollo-server-azure-functions": "^2.18.0",
-    "graphql": "^15.3.0"
+    "applicationinsights": "^1.8.7",
+    "graphql": "^15.3.0",
+    "mongoose": "^5.10.8"
   }
 }
