@@ -3,10 +3,30 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
+import MsalProvider, {MsalProviderPopupConfig}  from './components/core/msal/msal-provider';
+
+var msalProviderConfig : MsalProviderPopupConfig =  {
+  type:"popup",
+  msalConfig: {
+    auth: {
+      clientId: process.env.REACT_APP_AAD_APP_CLIENTID??"missing-client-id"
+    }
+  },
+  silentRequestConfig: {
+    scopes:[]
+  },
+  endSessionRequestConfig:{
+  },
+  loginRequestConfig:{
+    scopes:[]
+  }
+}
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <MsalProvider config={msalProviderConfig}>
+      <App />
+    </MsalProvider>
   </React.StrictMode>,
   document.getElementById('root')
 );

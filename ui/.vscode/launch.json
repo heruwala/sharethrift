@@ -8,6 +8,7 @@
           "PORT": "5000",
           "REACT_APP_GRAPH_SERVER": "http://localhost:7071/api/graphql"
         },
+        "envFile": "${workspaceRoot}/.env",
         "console": "integratedTerminal",
         "runtimeArgs": ["start", "--inspect"],
         "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/react-scripts",
@@ -16,4 +17,3 @@
       }
     ]
   }
-  
