@@ -32,6 +32,7 @@ steps:
   workingDirectory: ui
   env:
     INLINE_RUNTIME_CHUNK: false
+    REACT_APP_AAD_APP_CLIENTID: $(REACT_APP_AAD_APP_CLIENTID) 
 
 - task: AzureCLI@2
   displayName: Copy to Blob
