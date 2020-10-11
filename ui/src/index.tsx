@@ -1,9 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
 import * as serviceWorker from './serviceWorker';
 import MsalProvider, {MsalProviderPopupConfig}  from './components/core/msal/msal-provider';
+import ApolloConnection from './components/core/apollo-connection';
 
 var msalProviderConfig : MsalProviderPopupConfig =  {
   type:"popup",
@@ -25,7 +25,7 @@ var msalProviderConfig : MsalProviderPopupConfig =  {
 ReactDOM.render(
   <React.StrictMode>
     <MsalProvider config={msalProviderConfig}>
-      <App />
+      <ApolloConnection />
     </MsalProvider>
   </React.StrictMode>,
   document.getElementById('root')
