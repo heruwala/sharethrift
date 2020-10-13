@@ -53,7 +53,7 @@ stages:
 
     - task: FuncToolsInstaller@0
       inputs:
-        version: 'latest'
+        version: '3.0.2931'
 
     - task: Bash@3
       inputs:
