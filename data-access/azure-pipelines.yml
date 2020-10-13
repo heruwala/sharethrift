@@ -44,6 +44,12 @@ stages:
         versionSpec: '12.x'
       displayName: 'Install Node.js'
 
+
+
+    - task: FuncToolsInstaller@0
+      inputs:
+        version: '3.0.2931'
+
     - script: |
         if [ -f extensions.csproj ]
         then
@@ -51,19 +57,17 @@ stages:
         fi
       displayName: 'Build extensions'
 
-    - task: FuncToolsInstaller@0
-      inputs:
-        version: '3.0.2931'
-
     - task: Bash@3
+      displayName: 'Prepare binaries'
       inputs:
         targetType: 'inline'
         script: |
+          npm cache clean
           npm install
+          npm install -g azure-functions-core-tools
           npm run build:production
         workingDirectory: 'data-access'
-        failOnStderr: true
-      displayName: 'Prepare binaries'
+      
       
     - task: ArchiveFiles@2
       displayName: 'Archive files'
