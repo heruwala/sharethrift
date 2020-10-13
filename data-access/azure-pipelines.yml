@@ -64,7 +64,6 @@ stages:
         script: |
           npm cache clean
           npm install
-          npm install -g azure-functions-core-tools
           npm run build:production
         workingDirectory: 'data-access'
       
