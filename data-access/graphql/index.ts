@@ -13,8 +13,8 @@ import {
 } from 'apollo-server-plugin-base';
 
 import { ApolloServer, gql }  from 'apollo-server-azure-functions';
-import cosmosdbconnect from '../sharedCode/datasources/cosmosDb/connect';
-import MsalAuth from '../sharedCode/auth/msal';
+import cosmosdbconnect from '../shared/data-sources/cosmos-db/connect';
+import MsalAuth from '../shared/auth/msal';
 import { HttpRequest, Context } from '@azure/functions';
 
 
