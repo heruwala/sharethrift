@@ -64,7 +64,7 @@ stages:
         script: |
           npm cache clean
           npm install
-          npm run build:production
+          npm run build
         workingDirectory: 'data-access'
       
       
