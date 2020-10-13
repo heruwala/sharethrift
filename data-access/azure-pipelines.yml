@@ -51,13 +51,16 @@ stages:
         fi
       displayName: 'Build extensions'
 
+    - task: FuncToolsInstaller@0
+      inputs:
+        version: 'latest'
+
     - task: Bash@3
       inputs:
         targetType: 'inline'
         script: |
           npm install
-          npm install -g azure-functions-core-tools
-          npm run-script build:production --if-present
+          npm run build:production
         workingDirectory: 'data-access'
         failOnStderr: true
       displayName: 'Prepare binaries'
