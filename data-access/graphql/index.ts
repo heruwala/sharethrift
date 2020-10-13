@@ -14,6 +14,9 @@ import {
 
 import { ApolloServer, gql }  from 'apollo-server-azure-functions';
 import cosmosdbconnect from '../sharedCode/datasources/cosmosDb/connect';
+import MsalAuth from '../sharedCode/auth/msal';
+import { HttpRequest, Context } from '@azure/functions';
+
 
 // Construct a schema, using GraphQL schema language
 const typeDefs = gql`
@@ -25,7 +28,9 @@ const typeDefs = gql`
 // Provide resolver functions for your schema fields
 const resolvers = {
   Query: {
-    hello: () => 'Hello world!',
+    hello: (parent,args,context) => {
+      return `Hello world! ${JSON.stringify(context)}`
+    },
   },
 };
 
@@ -56,15 +61,43 @@ const appInsightsPlugin = <ApolloServerPlugin & GraphQLRequestListener>{
   
 }
 
+const getPlaygroundSetting = () => {
+  if(process.env.APOLLO_PLAYGROUND_VISIBLE === "true" ){
+    if(process.env.APOLLO_PLAYGROUND_ENDPOINT){
+      return {endpoint :process.env.APOLLO_PLAYGROUND_ENDPOINT}
+    }
+    return true
+  } else {
+    return false
+  }
+}
+
 const server = new ApolloServer(
   { 
-  typeDefs, 
-  resolvers, 
-  playground:true,
-  plugins: [
-    appInsightsPlugin
-  ],
+    typeDefs, 
+    resolvers, 
+    playground: {endpoint:process.env.APOLLO_PLAYGROUND_ENDPOINT},
+    plugins: [
+      appInsightsPlugin
+    ],
+    context: async (request) => {
+      var [ user, validated ] = await MsalAuth.VerifyAccessToken(request);
+      return {user, validated};
+    },
   },
 );
 
-exports.graphqlHandler = server.createHandler();
+const graphqlHandler = server.createHandler({
+  cors: {
+    origin: '*',
+    credentials: true,
+  },
+});
+
+export default (context: Context, req: HttpRequest) => {
+  // https://github.com/Azure/azure-functions-host/issues/6013
+  req.headers['x-ms-privatelink-id'] = '';
+  // apollo-server only reads this specific string
+  req.headers['Access-Control-Request-Headers'] = req.headers['Access-Control-Request-Headers'] || req.headers['access-control-request-headers'];
+  return graphqlHandler(context, req);
+}

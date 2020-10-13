@@ -53,7 +53,7 @@ const MsalProvider:FC<MsalProps> = (props: MsalProps) : JSX.Element => {
         try {
             const loginResponse = await msalInstance.loginPopup(loginRequestConfig);
             setHomeAccountId(loginResponse.account.homeAccountId)
-            setIsLoggedIn(true);
+            getAuthToken()
             console.log("MSAL loginResponse",loginResponse);
         } catch (err) {
             setIsLoggedIn(false);

@@ -21,6 +21,8 @@
     "apollo-server-azure-functions": "^2.18.0",
     "applicationinsights": "^1.8.7",
     "graphql": "^15.3.0",
-    "mongoose": "^5.10.8"
+    "jose": "^2.0.2",
+    "mongoose": "^5.10.8",
+    "openid-client": "^4.2.0"
   }
 }
