@@ -62,9 +62,8 @@ stages:
       inputs:
         targetType: 'inline'
         script: |
-          npm cache clean
           npm install
-          npm run build
+          npm run build:production
         workingDirectory: 'data-access'
       
       
