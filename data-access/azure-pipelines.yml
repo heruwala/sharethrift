@@ -51,12 +51,16 @@ stages:
         fi
       displayName: 'Build extensions'
 
-    - script: |
-        npm install
-        npm install -g azure-functions-core-tools
-        npm run-script build:production --if-present
+    - task: Bash@3
+      inputs:
+        targetType: 'inline'
+        script: |
+          npm install
+          npm install -g azure-functions-core-tools
+          npm run-script build:production --if-present
+        workingDirectory: 'data-access'
+        failOnStderr: true
       displayName: 'Prepare binaries'
-      workingDirectory: 'data-access'
       
     - task: ArchiveFiles@2
       displayName: 'Archive files'
