@@ -17,7 +17,6 @@ import cosmosdbconnect from '../shared/data-sources/cosmos-db/connect';
 import MsalAuth from '../shared/auth/msal';
 import { HttpRequest, Context } from '@azure/functions';
 
-
 // Construct a schema, using GraphQL schema language
 const typeDefs = gql`
   type Query {
@@ -48,7 +47,7 @@ const resolvers = {
 const appInsightsPlugin = <ApolloServerPlugin & GraphQLRequestListener>{
 
   // Fires whenever a GraphQL request is received from a client.
- requestDidStart(requestContext:GraphQLRequestContext): GraphQLRequestListener | void{
+  requestDidStart(requestContext:GraphQLRequestContext): GraphQLRequestListener | void{
     appInsightsClient.trackMetric({name: "apollo-query", value: 1});
     return this;
   },

@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC,useEffect } from 'react';
 import App from '../../App';
 import {
   ApolloClient,  
@@ -11,7 +11,7 @@ import {setContext} from '@apollo/client/link/context';
 import useMsal from './msal/use-msal';
 
 const ApolloConnection: FC<any> = () => {
-  const { getAuthToken } = useMsal();
+  const { getAuthToken, isLoggedIn } = useMsal();
 
   const withToken = setContext(async(_,{headers}) =>{
     const token = await getAuthToken();
@@ -31,6 +31,14 @@ const ApolloConnection: FC<any> = () => {
     link: from([withToken, httpLink]),
     cache: new InMemoryCache(),
   });
+
+  useEffect(() => {
+    if(!isLoggedIn){
+      (async () => {
+        await client.resetStore() //clear Apollo cache when user loggs off
+      })()
+    }
+  },[isLoggedIn]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <ApolloProvider client={client}>

@@ -1,4 +1,4 @@
-import React, {FC,ReactNode,useState} from 'react';
+import React, {FC,ReactNode,useState,useEffect} from 'react';
 import MsalContext from './msal-context';
 import * as msal from "@azure/msal-browser";
 
@@ -34,11 +34,10 @@ export type MsalProps = {
 const MsalProvider:FC<MsalProps> = (props: MsalProps) : JSX.Element => {
     const [isLoggedIn,setIsLoggedIn] = useState<boolean>(false);
     const [homeAccountId,setHomeAccountId] = useState<string>();
-
     var usePopup = props.config.type === 'popup';
 
     const msalInstance = new msal.PublicClientApplication(props.config.msalConfig);
-
+    
     var login = async() => {
         if(usePopup){
             var popupConfig = props.config as MsalProviderPopupConfig
@@ -54,7 +53,6 @@ const MsalProvider:FC<MsalProps> = (props: MsalProps) : JSX.Element => {
             const loginResponse = await msalInstance.loginPopup(loginRequestConfig);
             setHomeAccountId(loginResponse.account.homeAccountId)
             getAuthToken()
-            console.log("MSAL loginResponse",loginResponse);
         } catch (err) {
             setIsLoggedIn(false);
         }
@@ -68,25 +66,27 @@ const MsalProvider:FC<MsalProps> = (props: MsalProps) : JSX.Element => {
         }
     }
 
-    let getAccount =():msal.AccountInfo | undefined => {
-        console.log("homeAccountId",homeAccountId)
-        if(!homeAccountId) return undefined
-        return msalInstance.getAccountByHomeId(homeAccountId) ?? undefined;
+    let getAccount =(providedHomeAccountId?:string):msal.AccountInfo | undefined => {
+        let usedHomeAccountId = providedHomeAccountId??homeAccountId;
+        if(!usedHomeAccountId) return undefined
+        return msalInstance.getAccountByHomeId(usedHomeAccountId) ?? undefined;
     }
 
-    let getFullSilentRequestConfig = (silentRequestConfig:MsalMinimalSilentRequestConfig): msal.SilentRequest |undefined => {
-        let account = getAccount();
-        if(!account) return undefined;
+    let getFullSilentRequestConfig = (silentRequestConfig:MsalMinimalSilentRequestConfig, providedHomeAccountId?:string): msal.SilentRequest |undefined => {
+        let account = getAccount(providedHomeAccountId)??{} as msal.AccountInfo;
+        if(typeof account === 'undefined') return undefined;
         return {
             account,
             ...silentRequestConfig
         } as msal.SilentRequest
     }
     
-    let getAuthToken = async () => {
-        var fullSilentRequestConfig = getFullSilentRequestConfig(props.config.silentRequestConfig);
-        console.log("getAuthToken",fullSilentRequestConfig);
-        if(!fullSilentRequestConfig) return;
+    let getAuthToken = async (providedHomeAccountId?:string) =>{
+        var fullSilentRequestConfig = getFullSilentRequestConfig(props.config.silentRequestConfig,providedHomeAccountId);
+        if(!fullSilentRequestConfig) {
+            setIsLoggedIn(false);
+            return;
+        };
         
         if(usePopup){
             var popupConfig = props.config as MsalProviderPopupConfig
@@ -96,17 +96,23 @@ const MsalProvider:FC<MsalProps> = (props: MsalProps) : JSX.Element => {
             return await authTokenRedirect(fullSilentRequestConfig,redirectConfig?.redirectRequestConfig)
         }
     }
-
+    let handleRedirectResult = (authResult:msal.AuthenticationResult | null) => {
+        if(!authResult || authResult.account.homeAccountId === homeAccountId) return;
+        setHomeAccountId(authResult.account.homeAccountId)
+        getAuthToken()
+    }
+    useEffect(() => {
+        msalInstance.handleRedirectPromise().then(handleRedirectResult);
+    },[]); // eslint-disable-line react-hooks/exhaustive-deps
+    
     let authTokenPopup = async (silentRequest:msal.SilentRequest,loginRequestConfig?: msal.AuthorizationUrlRequest) : Promise<string|undefined> => {
         var authResult : msal.AuthenticationResult;
         try {
             authResult = await msalInstance.acquireTokenSilent(silentRequest)
-            console.log("MSAL authenticationResult", authResult)
             return authResult.accessToken;
         } catch (err) {
             if(err instanceof msal.InteractionRequiredAuthError){
                 // should log in
-                setIsLoggedIn(false);
                 if(loginRequestConfig){
                     authResult = await msalInstance.acquireTokenPopup(loginRequestConfig);
                     setIsLoggedIn(true);
@@ -118,12 +124,10 @@ const MsalProvider:FC<MsalProps> = (props: MsalProps) : JSX.Element => {
     } 
 
     let authTokenRedirect = async (silentRequest:msal.SilentRequest,redirectRequestConfig? :msal.RedirectRequest | undefined) : Promise<string|undefined> => {
-        var authResult : msal.AuthenticationResult;
         try {
-            authResult = await msalInstance.acquireTokenSilent(silentRequest)
+            var authResult = await msalInstance.acquireTokenSilent(silentRequest)
             setHomeAccountId(authResult.account.homeAccountId)
             setIsLoggedIn(true);
-            console.log("MSAL authenticationResult", authResult)
             return authResult.accessToken;
         } catch (err) {
             if(err instanceof msal.InteractionRequiredAuthError){
@@ -136,7 +140,7 @@ const MsalProvider:FC<MsalProps> = (props: MsalProps) : JSX.Element => {
             return undefined;
         }
     } 
-
+ 
     let logout = async() =>{
         if(props.config.endSessionRequestConfig){
             props.config.endSessionRequestConfig.account = getAccount();
@@ -148,10 +152,10 @@ const MsalProvider:FC<MsalProps> = (props: MsalProps) : JSX.Element => {
     return (
         <MsalContext.Provider 
             value={{
-                getAuthToken:()  =>  getAuthToken(), 
-                isLoggedIn:isLoggedIn,
-                logout: () =>  logout(),
-                login: ()=> login(),
+                getAuthToken:   () => getAuthToken(), 
+                isLoggedIn:     isLoggedIn,
+                logout:         () =>  logout(),
+                login:          ()=> login(),
             }}>
             {props.children}
         </MsalContext.Provider>

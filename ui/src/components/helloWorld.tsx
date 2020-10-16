@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import { useQuery, gql } from '@apollo/client';
+import {  gql, useQuery } from '@apollo/client';
 
 const HELLO_WORLD = gql`
   query {
@@ -12,10 +12,10 @@ const HelloWorld: FC<any> = () => {
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error :(</p>;
-  console.log('data',data)
+  if (data) {console.log('updated data')};
 
   return (
-    <span>
+    <span style={{fontSize:'small',lineBreak:'anywhere'}}>
     ApolloGraphQL Says: {data.hello}
     </span>
   )
