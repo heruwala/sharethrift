@@ -51,7 +51,7 @@ const appInsightsPlugin = <ApolloServerPlugin & GraphQLRequestListener>{
     appInsightsClient.trackMetric({name: "apollo-query", value: 1});
     return this;
   },
-  // Fires for graph exceptoions
+  // Fires for graph exceptions
   didEncounterErrors: function(requestContext:GraphQLRequestContext) {
     appInsightsClient.trackMetric({name: "apollo-error", value: 1});
     appInsightsClient.trackException({exception: new Error("Apollo Error")});

@@ -8,7 +8,7 @@ import {
   from
 } from '@apollo/client';
 import {setContext} from '@apollo/client/link/context';
-import useMsal from './msal/use-msal';
+import {useMsal} from 'msal-react-lite';
 
 const ApolloConnection: FC<any> = () => {
   const { getAuthToken, isLoggedIn } = useMsal();

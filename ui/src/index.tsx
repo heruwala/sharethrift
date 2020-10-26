@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import * as serviceWorker from './serviceWorker';
-import MsalProvider, {MsalProviderPopupConfig, MsalProviderRedirectConfig}  from './components/core/msal/msal-provider';
+import MsalProvider, {MsalProviderPopupConfig, MsalProviderRedirectConfig}  from 'msal-react-lite';
 import ApolloConnection from './components/core/apollo-connection';
 import * as msal from "@azure/msal-browser";
 
@@ -66,7 +66,7 @@ var msalProviderRedirectConfig : MsalProviderRedirectConfig =  {
   msalConfig: {
     auth: {
       clientId: clientId,
-      authority: appAuthority,
+      authority: commonAuthority,
       redirectUri: redirectUri, 
     },
     system: {

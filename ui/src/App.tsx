@@ -1,7 +1,7 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
-import useMsal from "./components/core/msal/use-msal";
+import {useMsal} from 'msal-react-lite'
 import HelloWorld from './components/helloWorld';
 
 function App() {
