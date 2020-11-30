@@ -1,22 +1,36 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
-import {useMsal} from 'msal-react-lite'
+import {useMsal} from './components/msal-react-lite'
 import HelloWorld from './components/helloWorld';
+import { AuthenticationResult } from '@azure/msal-browser';
 
 function App() {
-  const {login,logout,getAuthToken,isLoggedIn} = useMsal()
+  const {login,logout,getAuthToken,getAuthResult,isLoggedIn} = useMsal()
+  const [userName,setUsername] = React.useState<string>("");
+
+  React.useEffect(() => {
+    (async()=>{
+      var authResult = (await getAuthResult())
+      console.log('AuthResult:',authResult);
+      setUsername(((authResult?.idTokenClaims) as any)?.name??'' as string);
+    })()
+  },[isLoggedIn,getAuthResult])
+
   return (
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
+
         <p>
           Edit <code>src/App.tsx</code> and save to reload.
           {/* ----------Add this below------------- */}
           <br/>Login Status: {isLoggedIn?<span>Logged In</span> :<span>Logged Out</span>} <br/>
-          <button onClick={() => login()}>LogIn</button>
+          {!(userName)?<></>:<>Welcome {userName}!<br/></>}
+          <button onClick={async () =>  await login()}>LogIn</button>
           <button onClick={() => logout()}>LogOut</button>
-          <button onClick={() => getAuthToken()}>Get Token</button>
+          <button onClick={async () => console.log('AuthToken:',await getAuthToken())}>Get Auth Token</button>
+          <button onClick={async () => console.log('AuthResult:',await getAuthResult())}>Get Auth Result</button>
         </p>
         <HelloWorld />
         <a

@@ -21,6 +21,7 @@ var verifyAccessToken = async (context) : Promise<[object, boolean]>  => {
     keyStore, 
     {
       audience: settings.audience,
+      issuer: `https://login.microsoftonline.com/${settings.tenantId}/v2.0`
      // issuer: 
         //issuer must remain commented out if you're accepting tokens from :
         // Microsoft's public endpoint (which will be: 'https://login.microsoftonline.com/9188040d-6c67-4c5b-b112-36a304b66dad/v2.0' or it can be any AAD tenant's ID)
