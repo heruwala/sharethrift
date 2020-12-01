@@ -37,10 +37,14 @@ const resolvers = {
   },
   Mutation: {
     getServerTime: (parent, args, context) => {
+      const result = {
+        currentTime: Date.now(),
+        expirationTime: context?.user?.authToken?.exp,
+      };
       if (context.validated) {
-        return Date.now();
+        return JSON.stringify(result);
       } else {
-        return 0;
+        return JSON.stringify({ currentTime: 0, expirationTime: 0 });
       }
     },
   },
