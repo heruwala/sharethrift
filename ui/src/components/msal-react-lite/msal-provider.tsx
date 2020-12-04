@@ -1,131 +1,164 @@
-import React, {FC,ReactNode,useState,useEffect} from 'react';
-import MsalContext from './msal-context';
+import React, { FC, ReactNode, useState, useEffect } from "react";
+import MsalContext from "./msal-context";
 import * as msal from "@azure/msal-browser";
 
-export interface MsalMinimalSilentRequestConfig  {
-  scopes: Array<string>,
-  claims?:string,
-  autority?:string,
-  forceRquest?: boolean,
-  redirectUri?: string
+export interface MsalMinimalSilentRequestConfig {
+  scopes: Array<string>;
+  claims?: string;
+  autority?: string;
+  forceRquest?: boolean;
+  redirectUri?: string;
 }
 
 export interface MsalProviderPopupConfig {
-  type: 'popup',
-  msalConfig: msal.Configuration,
-  silentRequestConfig:MsalMinimalSilentRequestConfig,
-  endSessionRequestConfig?: msal.EndSessionRequest,
-  loginRequestConfig?: msal.AuthorizationUrlRequest
+  type: "popup";
+  msalConfig: msal.Configuration;
+  silentRequestConfig: MsalMinimalSilentRequestConfig;
+  endSessionRequestConfig?: msal.EndSessionRequest;
+  loginRequestConfig?: msal.AuthorizationUrlRequest;
 }
 
 export interface MsalProviderRedirectConfig {
-  type: 'redirect',
-  msalConfig: msal.Configuration,
-  silentRequestConfig:MsalMinimalSilentRequestConfig,
-  endSessionRequestConfig?: msal.EndSessionRequest,
-  redirectRequestConfig?: msal.RedirectRequest
+  type: "redirect";
+  msalConfig: msal.Configuration;
+  silentRequestConfig: MsalMinimalSilentRequestConfig;
+  endSessionRequestConfig?: msal.EndSessionRequest;
+  redirectRequestConfig?: msal.RedirectRequest;
 }
 
 export type MsalProps = {
-  config: MsalProviderPopupConfig|MsalProviderRedirectConfig;
-  children:ReactNode;
-}
+  config: MsalProviderPopupConfig | MsalProviderRedirectConfig;
+  children: ReactNode;
+};
 
-const MsalProvider:FC<MsalProps> = (props: MsalProps) : JSX.Element => {
-  const [isLoggedIn,setIsLoggedIn] = useState<boolean>(false);
-  const [homeAccountId,setHomeAccountId] = useState<string>();
-  var usePopup = props.config.type === 'popup';
+const MsalProvider: FC<MsalProps> = (props: MsalProps): JSX.Element => {
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const [homeAccountId, setHomeAccountId] = useState<string>();
+  var usePopup = props.config.type === "popup";
 
-  const msalInstance = new msal.PublicClientApplication(props.config.msalConfig);
-  
-  var login = async() => {
-    if(usePopup){
-      var popupConfig = props.config as MsalProviderPopupConfig
-      return await loginPopup(popupConfig.loginRequestConfig)
-    }else{
-      var redirectConfig = props.config as MsalProviderRedirectConfig
-      await loginRedirect(redirectConfig?.redirectRequestConfig)
+  const msalInstance = new msal.PublicClientApplication(
+    props.config.msalConfig
+  );
+
+  var login = async () => {
+    if (usePopup) {
+      var popupConfig = props.config as MsalProviderPopupConfig;
+      return await loginPopup(popupConfig.loginRequestConfig);
+    } else {
+      var redirectConfig = props.config as MsalProviderRedirectConfig;
+      await loginRedirect(redirectConfig?.redirectRequestConfig);
       return undefined;
     }
-  }
+  };
 
-  let loginPopup = async (loginRequestConfig? : msal.AuthorizationUrlRequest) => {
+  let loginPopup = async (
+    loginRequestConfig?: msal.AuthorizationUrlRequest
+  ) => {
     try {
       const loginResponse = await msalInstance.loginPopup(loginRequestConfig);
-      setHomeAccountId(loginResponse.account?.homeAccountId)
-      return await getAuthResult()
+      setHomeAccountId(loginResponse.account?.homeAccountId);
+      return await getAuthResult();
     } catch (err) {
-      console.error('Login error', err)
+      console.error("Login error", err);
       setIsLoggedIn(false);
-      return undefined
+      return undefined;
     }
-  }
+  };
 
-  let loginRedirect = async (redirectRequestConfig? :msal.RedirectRequest | undefined) => {
+  let loginRedirect = async (
+    redirectRequestConfig?: msal.RedirectRequest | undefined
+  ) => {
     try {
       await msalInstance.loginRedirect(redirectRequestConfig);
     } catch (err) {
       // handle error
     }
-  }
+  };
 
-  let handleRedirectResult = async (authResult:msal.AuthenticationResult | null) => {
-    if(!authResult){ //may be called from loginTokenPopup or on a page load
-      authResult = await getAuthResult()??null;
+  let handleRedirectResult = async (
+    authResult: msal.AuthenticationResult | null
+  ) => {
+    if (!authResult) {
+      //may be called from loginTokenPopup or on a page load
+      authResult = (await getAuthResult()) ?? null;
     }
-    if(!authResult || authResult.account?.homeAccountId === homeAccountId) return;
-    setHomeAccountId(authResult.account.homeAccountId)
-    getAuthResult(authResult.account.homeAccountId)
-  }
+    if (!authResult || authResult.account?.homeAccountId === homeAccountId)
+      return;
+    setHomeAccountId(authResult.account.homeAccountId);
+    getAuthResult(authResult.account.homeAccountId);
+  };
   useEffect(() => {
-    msalInstance.handleRedirectPromise().then(async(authResult) => {await handleRedirectResult(authResult)});
-  },[]); // eslint-disable-line react-hooks/exhaustive-deps
+    msalInstance.handleRedirectPromise().then(async (authResult) => {
+      await handleRedirectResult(authResult);
+    });
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  let getAccount =(providedHomeAccountId?:string):msal.AccountInfo | undefined => {
-    let usedHomeAccountId = providedHomeAccountId??homeAccountId;
-    if(!usedHomeAccountId) return undefined
+  let getAccount = (
+    providedHomeAccountId?: string
+  ): msal.AccountInfo | undefined => {
+    let usedHomeAccountId = providedHomeAccountId ?? homeAccountId;
+    if (!usedHomeAccountId) return undefined;
     return msalInstance.getAccountByHomeId(usedHomeAccountId) ?? undefined;
-  }
+  };
 
-  let getFullSilentRequestConfig = (silentRequestConfig:MsalMinimalSilentRequestConfig, providedHomeAccountId?:string): msal.SilentRequest |undefined => {
-    let account = getAccount(providedHomeAccountId)??{} as msal.AccountInfo;
-    if(typeof account === 'undefined') return undefined;
+  let getFullSilentRequestConfig = (
+    silentRequestConfig: MsalMinimalSilentRequestConfig,
+    providedHomeAccountId?: string
+  ): msal.SilentRequest | undefined => {
+    let account = getAccount(providedHomeAccountId) ?? ({} as msal.AccountInfo);
+    if (typeof account === "undefined") return undefined;
     return {
       account,
-      ...silentRequestConfig
-    } as msal.SilentRequest
-  }
+      ...silentRequestConfig,
+    } as msal.SilentRequest;
+  };
 
-  let getAuthToken = async (providedHomeAccountId?:string) : Promise<string|undefined> =>{
-    return (await getAuthResult(providedHomeAccountId))?.accessToken
-  }
+  let getAuthToken = async (
+    providedHomeAccountId?: string
+  ): Promise<string | undefined> => {
+    return (await getAuthResult(providedHomeAccountId))?.accessToken;
+  };
 
-  let getAuthResult = async (providedHomeAccountId?:string) : Promise<msal.AuthenticationResult|undefined>  => {
-    var fullSilentRequestConfig = getFullSilentRequestConfig(props.config.silentRequestConfig,providedHomeAccountId);
-    if(!fullSilentRequestConfig) {
+  let getAuthResult = async (
+    providedHomeAccountId?: string
+  ): Promise<msal.AuthenticationResult | undefined> => {
+    var fullSilentRequestConfig = getFullSilentRequestConfig(
+      props.config.silentRequestConfig,
+      providedHomeAccountId
+    );
+    if (!fullSilentRequestConfig) {
       setIsLoggedIn(false);
       return;
     }
 
-    if(usePopup){
-      var popupConfig = props.config as MsalProviderPopupConfig
-      return await authTokenPopup(fullSilentRequestConfig,popupConfig.loginRequestConfig)
-    }else{
-      var redirectConfig = props.config as MsalProviderRedirectConfig
-      return await authTokenRedirect(fullSilentRequestConfig,redirectConfig?.redirectRequestConfig)
+    if (usePopup) {
+      var popupConfig = props.config as MsalProviderPopupConfig;
+      return await authTokenPopup(
+        fullSilentRequestConfig,
+        popupConfig.loginRequestConfig
+      );
+    } else {
+      var redirectConfig = props.config as MsalProviderRedirectConfig;
+      return await authTokenRedirect(
+        fullSilentRequestConfig,
+        redirectConfig?.redirectRequestConfig
+      );
     }
-  }
+  };
 
-  let authTokenPopup = async (silentRequest:msal.SilentRequest,loginRequestConfig?: msal.AuthorizationUrlRequest) : Promise<msal.AuthenticationResult|undefined> => {
-    var authResult : msal.AuthenticationResult;
+  let authTokenPopup = async (
+    silentRequest: msal.SilentRequest,
+    loginRequestConfig?: msal.AuthorizationUrlRequest
+  ): Promise<msal.AuthenticationResult | undefined> => {
+    var authResult: msal.AuthenticationResult;
     try {
-      authResult = await msalInstance.acquireTokenSilent(silentRequest)
-      setIsLoggedIn(true)
-      return authResult
+      authResult = await msalInstance.acquireTokenSilent(silentRequest);
+      setIsLoggedIn(true);
+      return authResult;
     } catch (err) {
-      if(err instanceof msal.InteractionRequiredAuthError){
+      if (err instanceof msal.InteractionRequiredAuthError) {
         // should log in
-        if(loginRequestConfig){
+        if (loginRequestConfig) {
           authResult = await msalInstance.acquireTokenPopup(loginRequestConfig);
           setIsLoggedIn(true);
           return authResult;
@@ -133,46 +166,51 @@ const MsalProvider:FC<MsalProps> = (props: MsalProps) : JSX.Element => {
       }
       return undefined;
     }
-  } 
+  };
 
-  let authTokenRedirect = async (silentRequest:msal.SilentRequest,redirectRequestConfig? :msal.RedirectRequest | undefined) : Promise<msal.AuthenticationResult|undefined> => {
+  let authTokenRedirect = async (
+    silentRequest: msal.SilentRequest,
+    redirectRequestConfig?: msal.RedirectRequest | undefined
+  ): Promise<msal.AuthenticationResult | undefined> => {
     try {
-      var authResult = await msalInstance.acquireTokenSilent(silentRequest)
-      setHomeAccountId(authResult.account?.homeAccountId)
+      var authResult = await msalInstance.acquireTokenSilent(silentRequest);
+      setHomeAccountId(authResult.account?.homeAccountId);
       setIsLoggedIn(true);
       return authResult;
     } catch (err) {
-      if(err instanceof msal.InteractionRequiredAuthError){
+      if (err instanceof msal.InteractionRequiredAuthError) {
         // should log in
         setIsLoggedIn(false);
-        if(redirectRequestConfig){
+        if (redirectRequestConfig) {
           await msalInstance.acquireTokenRedirect(redirectRequestConfig);
         }
       }
       return undefined;
     }
-  } 
+  };
 
-  let logout = async() =>{
-    if(props.config.endSessionRequestConfig){
-      props.config.endSessionRequestConfig.account = getAccount();
+  let logout = async () => {
+    if (!props.config.endSessionRequestConfig) {
+      props.config.endSessionRequestConfig = {};
     }
-    await msalInstance.logout(props.config.endSessionRequestConfig)
+    props.config.endSessionRequestConfig.account = getAccount();
+    await msalInstance.logout(props.config.endSessionRequestConfig);
     setIsLoggedIn(false);
-  }
+  };
 
   return (
-    <MsalContext.Provider 
+    <MsalContext.Provider
       value={{
-        getAuthToken:   () => getAuthToken(), 
-        getAuthResult:  () => getAuthResult(),
-        isLoggedIn:     isLoggedIn,
-        logout:         () => logout(),
-        login:          () => login(),
-      }}>
+        getAuthToken: () => getAuthToken(),
+        getAuthResult: () => getAuthResult(),
+        isLoggedIn: isLoggedIn,
+        logout: () => logout(),
+        login: () => login(),
+      }}
+    >
       {props.children}
     </MsalContext.Provider>
-  )
-}
+  );
+};
 
 export default MsalProvider;
