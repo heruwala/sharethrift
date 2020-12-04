@@ -11,7 +11,7 @@ const ReactIdleTimer: FC<any> = (props: any) => {
 
   const expirationTimer = process.env.REACT_APP_LOGOUT_TIMER;
 
-  const { logout, isLoggedIn } = useMsal();
+  const { isLoggedIn } = useMsal();
 
   useEffect(() => {
     var timeFunction;
@@ -32,10 +32,12 @@ const ReactIdleTimer: FC<any> = (props: any) => {
         currentTime !== "" &&
         expirationTime !== ""
       ) {
-        logout();
+        sessionStorage.clear();
+
         clearTimeout(timeFunction);
         setExpirationTime("");
         setEnableCounter(false);
+        document.location.href="/";
       }
     } else {
       clearTimeout(timeFunction);
