@@ -5,6 +5,12 @@
 		},
 		{
 			"path": "data-access"
+		},
+		{
+			"path": "identity"
+		},
+		{
+			"path": "content-moderation"
 		}
 	],
 	"settings": {
@@ -12,18 +18,41 @@
 	},
 	"launch": {
 		"version": "0.2.0",
-		"compounds": [{
-			"name": "full-stack",
-			"configurations": [
-			  {
-				"folder": "ui",
-				"name": "Launch via NPM"
-			  },
-			  {
-				"folder": "data-access",
-				"name": "Attach to Node Functions"
-			  }
-			]
-		}],
+		"compounds": [
+			{
+				"name": "full-stack",
+				"configurations": [
+					{
+						"folder": "ui",
+						"name": "Launch via NPM"
+					},
+					{
+						"folder": "data-access",
+						"name": "Attach to Node Functions"
+					},
+					{
+						"folder": "identity",
+						"name": "Launch via NPM with Dapr"
+					},
+					{
+						"folder": "content-moderation",
+						"name": "Launch via NPM with Dapr"
+					}
+				]
+			},
+			{
+				"name": "all-dapr",
+				"configurations": [
+					{
+						"folder": "identity",
+						"name": "Launch via NPM with Dapr"
+					},
+					{
+						"folder": "content-moderation",
+						"name": "Launch via NPM with Dapr"
+					}
+				]
+			}
+		],
 	}
 }

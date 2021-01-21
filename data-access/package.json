@@ -20,6 +20,7 @@
     "@types/node": "^14.11.2",
     "apollo-server-azure-functions": "^2.18.0",
     "applicationinsights": "^1.8.7",
+    "axios": "^0.21.1",
     "graphql": "^15.3.0",
     "jose": "^2.0.2",
     "mongoose": "^5.10.8",
