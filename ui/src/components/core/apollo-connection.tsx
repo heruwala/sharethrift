@@ -9,7 +9,7 @@ import {
 } from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
 import { useMsal } from "../msal-react-lite";
-import ReactIdleTimer from "../react-idle-timer";
+//import ReactIdleTimer from "../react-idle-timer";
 const ApolloConnection: FC<any> = () => {
   const { getAuthToken, isLoggedIn } = useMsal();
 
@@ -39,12 +39,15 @@ const ApolloConnection: FC<any> = () => {
       })();
     }
   }, [isLoggedIn]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  return (
-    <ApolloProvider client={client}>
-      <ReactIdleTimer>
+/*
+     <<ReactIdleTimer> 
         <App />
       </ReactIdleTimer>
+
+*/
+  return (
+    <ApolloProvider client={client}>
+      <App />
     </ApolloProvider>
   );
 };

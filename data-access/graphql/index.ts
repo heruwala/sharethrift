@@ -17,38 +17,9 @@ import cosmosdbconnect from "../shared/data-sources/cosmos-db/connect";
 import MsalAuth from "../shared/auth/msal";
 import { HttpRequest, Context } from "@azure/functions";
 
-// Construct a schema, using GraphQL schema language
-const typeDefs = gql`
-  type Query {
-    hello: String
-  }
+import resolvers from "./resolvers/index";
+import typeDefs from "./typedefs/index";
 
-  type Mutation {
-    getServerTime: String
-  }
-`;
-
-// Provide resolver functions for your schema fields
-const resolvers = {
-  Query: {
-    hello: (parent, args, context) => {
-      return `Hello world! ${JSON.stringify(context)}`;
-    },
-  },
-  Mutation: {
-    getServerTime: (parent, args, context) => {
-      const result = {
-        currentTime: Date.now(),
-        expirationTime: context?.user?.authToken?.exp,
-      };
-      if (context.validated) {
-        return JSON.stringify(result);
-      } else {
-        return JSON.stringify({ currentTime: 0, expirationTime: 0 });
-      }
-    },
-  },
-};
 
 /* IIFE for connecting to CosmosDB */
 (async () => {

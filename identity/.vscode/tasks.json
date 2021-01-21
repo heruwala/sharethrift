@@ -1,0 +1,38 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "appId": "identity",
+      "appPort": 3001,
+      "httpPort": 3501,
+      "metricsPort": 9091,
+      "grpcPort": 50001,
+
+      "label": "daprd-debug",
+      "type": "daprd",
+      "dependsOn": "typescript build",
+    },
+    {
+      "appId": "identity",
+      "label": "daprd-down",
+      "type": "daprd-down"
+    },
+    {
+      "type": "typescript",
+      "label": "typescript build",
+      "tsconfig": "tsconfig.json",
+      "dependsOn": "npm install"
+    },
+    {
+      "type": "shell",
+      "label": "npm build",
+      "command": "npm run build",
+      "dependsOn": "npm install"
+    },
+    {
+      "type": "shell",
+      "label": "npm install",
+      "command": "npm install"
+    }
+  ]
+}

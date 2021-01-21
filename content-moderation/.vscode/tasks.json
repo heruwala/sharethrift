@@ -1,0 +1,38 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"appId": "content-moderation",
+			"appPort": 3002,
+			"httpPort": 3502,
+			"metricsPort": 9092,
+			"grpcPort": 50002,
+
+			"label": "daprd-debug",
+			"type": "daprd",
+			"dependsOn": "typescript build"
+		},
+		{
+			"appId": "content-moderation",
+			"label": "daprd-down",
+			"type": "daprd-down"
+		},
+		{
+			"type": "typescript",
+			"label": "typescript build",
+			"tsconfig":"tsconfig.json",
+			"dependsOn": "npm install",
+		},
+		{
+			"type": "shell",
+			"label": "npm build",
+			"command": "npm run build",
+			"dependsOn": "npm install",
+		  },
+		  {
+			"type": "shell",
+			"label": "npm install",
+			"command": "npm install" 
+		  },
+	]
+}

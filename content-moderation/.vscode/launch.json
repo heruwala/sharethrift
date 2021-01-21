@@ -1,0 +1,28 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "pwa-node",
+      "request": "launch",
+      "name": "Launch via NPM",
+      "skipFiles": ["<node_internals>/**"],
+      "preLaunchTask": "typescript build",
+      "program": "${workspaceFolder}/index.ts",
+      "outFiles": ["${workspaceFolder}/**/*.js"],
+      "envFile": "${workspaceRoot}/.env",
+      "console": "integratedTerminal",
+      "postDebugTask": "daprd-down",
+      "runtimeArgs": ["--inspect"],
+    },
+    {
+      "type": "node",
+      "name": "Launch via NPM with Dapr",
+      "request": "launch",
+      "skipFiles": ["<node_internals>/**"],
+      "preLaunchTask": "daprd-debug",
+      "postDebugTask": "daprd-down",
+      "program": "${workspaceFolder}/dist/index.js",
+      "outFiles": ["${workspaceFolder}/**/*.js"],
+    }
+  ]
+}
