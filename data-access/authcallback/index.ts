@@ -32,7 +32,7 @@ const httpTrigger: AzureFunction = async function (
     },
   };
 
-  if (!(req.body && req.body.email && req.body.email.contains("@"))) {
+  if (!(req.body && req.body.email && req.body.email.includes("@"))) {
     context.res = INVALID_REQUEST;
     context.log("Invalid Request");
     return;
@@ -77,15 +77,23 @@ const httpTrigger: AzureFunction = async function (
     };
   }
 
-  const name = req.query.name || (req.body && req.body.name);
-  const responseMessage = name
-    ? "Hello, " + name + ". This HTTP triggered function executed successfully."
-    : "This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response.";
-
+  // Email domain and user collected attribute are valid, return continuation response.
   context.res = {
-    // status: 200, /* Defaults to 200 */
-    body: responseMessage,
+    body: { action: "Continue" },
   };
+
+  context.log(context.res);
+  return;
+
+//   const name = req.query.name || (req.body && req.body.name);
+//   const responseMessage = name
+//     ? "Hello, " + name + ". This HTTP triggered function executed successfully."
+//     : "This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response.";
+
+//   context.res = {
+//     // status: 200, /* Defaults to 200 */
+//     body: responseMessage,
+//   };
 };
 
 export default httpTrigger;
