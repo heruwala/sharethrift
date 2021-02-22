@@ -1,4 +1,6 @@
-let appInsights = require("applicationinsights");
+import * as appInsights from "applicationinsights";
+
+//let appInsights = import("applicationinsights");
 appInsights.setup().start();
 appInsights.defaultClient.commonProperties = {
   environment: process.env.WEBSITE_HOSTNAME,
@@ -19,12 +21,18 @@ import { HttpRequest, Context } from "@azure/functions";
 
 import resolvers from "./resolvers/index";
 import typeDefs from "./typedefs/index";
+//import { execute } from "graphql";
 
-
+//var x = await fetch('...');
 /* IIFE for connecting to CosmosDB */
-(async () => {
+//(async () => {
+var connectMongo = async () => {
+  console.log("initialized");
+  return;
   try {
+    console.log("before cosmosConnect");
     await cosmosdbconnect();
+    console.log("after cosmosConnect");
   } catch (cosmosDbConnectError) {
     appInsightsClient.trackEvent({
       name: "COSMOSDB CONNECTION",
@@ -35,7 +43,18 @@ import typeDefs from "./typedefs/index";
     });
     appInsightsClient.trackException(cosmosDbConnectError);
   }
-})();
+}
+
+function enableConsoleLogging (context) {
+  if (context) {
+    const originalLogger = console.log;
+    console.log = function () {
+      context.log(...arguments);
+      originalLogger(...arguments);
+    };
+  }
+}
+//})();
 
 // referenced from https://jeffmagnusson.com/post/graphql-apollo-server-plugins-in-typescript
 const appInsightsPlugin = <ApolloServerPlugin & GraphQLRequestListener>{
@@ -50,9 +69,11 @@ const appInsightsPlugin = <ApolloServerPlugin & GraphQLRequestListener>{
   didEncounterErrors: function (requestContext: GraphQLRequestContext) {
     appInsightsClient.trackMetric({ name: "apollo-error", value: 1 });
     appInsightsClient.trackException({ exception: new Error("Apollo Error") });
+    /*
     appInsightsClient.trackException({
       exception: { category: "Apollo Error", details: requestContext.errors },
     });
+    */
   },
 };
 
@@ -85,7 +106,18 @@ const graphqlHandler = server.createHandler({
   },
 });
 
-export default (context: Context, req: HttpRequest) => {
+var initalized =false;
+
+
+module.exports = async function  (context: Context, req: HttpRequest) {
+/*
+  if(!initalized){
+    //enableConsoleLogging(context);
+    await connectMongo();
+    initalized = true;
+  }
+  */
+  /*
   var authorization = req.headers["authorization"] || "";
   var token = authorization.split(/\s+/).pop() || ""; // and the encoded auth token
   var auth = Buffer.from(token, "base64").toString(); // convert from base64
@@ -163,7 +195,7 @@ export default (context: Context, req: HttpRequest) => {
   };
 
   context.log(context.res);
-
+*/
   // https://github.com/Azure/azure-functions-host/issues/6013
   req.headers["x-ms-privatelink-id"] = "";
   // apollo-server only reads this specific string

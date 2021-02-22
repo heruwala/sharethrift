@@ -11,6 +11,9 @@
 		},
 		{
 			"path": "content-moderation"
+		},
+		{
+			"path": "project"
 		}
 	],
 	"settings": {
