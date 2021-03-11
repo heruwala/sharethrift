@@ -51,7 +51,7 @@ steps:
 
 - template: ./build-pipeline/deploy.yml
   parameters:
-    subscription: 'Visual Studio Enterprise(1e23aa72-fb0d-424b-a48c-0de4916aee72)'
+    subscription: $(azureSubscription)
     destinationBlobContainer: 'sharethrift'
     cdnProfile: 'sharethrift'
     cdnResourceGroup: 'sharethrift'
@@ -59,7 +59,7 @@ steps:
 
 - template: ./build-pipeline/deploy.yml
   parameters:
-    subscription: 'Visual Studio Enterprise(1e23aa72-fb0d-424b-a48c-0de4916aee72)'
+    subscription: $(azureSubscription)
     destinationBlobContainer: 'sharethriftqa'
     cdnProfile: 'sharethrift'
     cdnResourceGroup: 'sharethrift'
