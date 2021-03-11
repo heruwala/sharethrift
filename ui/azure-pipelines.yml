@@ -48,3 +48,12 @@ steps:
       az cdn endpoint purge --profile-name sharethrift -g rg-sharethrift -n sharethrift --content-paths "/*"
     addSpnToEnvironment: true
     workingDirectory: 'ui/build'
+
+- template: /build-pipeline/deploy.yml
+  parameters:
+    subscription: 'Visual Studio Enterprise(1e23aa72-fb0d-424b-a48c-0de4916aee72)'
+    destinationBlobContainer: 'sharethrift'
+    cdnProfile: 'sharethrift'
+    cdnResourceGroup: 'sharethrift'
+    cndName: 'sharethrift'
+
