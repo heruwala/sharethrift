@@ -15,11 +15,11 @@ parameters:
 - task: AzureCLI@2
   displayName: Copy to Blob
   inputs:
-    azureSubscription: {{subscription}}
+    azureSubscription: {{parameters.subscription}}
     scriptType: 'pscore'
     scriptLocation: 'inlineScript'
     inlineScript: |
-      az storage blob upload-batch --destination `$web --account-name {{destinationBlobContainer}} --source . --auth-mode login
-      az cdn endpoint purge --profile-name {{cdnProfile}} -g {{cdnResourceGroup}} -n {{cdnName}} --content-paths "/*"
+      az storage blob upload-batch --destination `$web --account-name {{parameters.destinationBlobContainer}} --source . --auth-mode login
+      az cdn endpoint purge --profile-name {{parameters.cdnProfile}} -g {{parameters.cdnResourceGroup}} -n {{parameters.cdnName}} --content-paths "/*"
     addSpnToEnvironment: true
     workingDirectory: 'ui/build'
