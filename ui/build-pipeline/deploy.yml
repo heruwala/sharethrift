@@ -1,0 +1,25 @@
+parameters:
+- name: subscription
+  type: connectedService:AzureRM
+  default: false
+  environmentVars:
+- name: destinationBlobContainer
+  type: string
+- name: cdnProfile
+  type: string
+- name: cdnResourceGroup
+  type: string
+- name: cdnName
+  type: string
+
+- task: AzureCLI@2
+  displayName: Copy to Blob
+  inputs:
+    azureSubscription: {{subscription}}
+    scriptType: 'pscore'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      az storage blob upload-batch --destination `$web --account-name {{destinationBlobContainer}} --source . --auth-mode login
+      az cdn endpoint purge --profile-name {{cdnProfile}} -g {{cdnResourceGroup}} -n {{cdnName}} --content-paths "/*"
+    addSpnToEnvironment: true
+    workingDirectory: 'ui/build'
