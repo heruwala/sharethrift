@@ -49,7 +49,7 @@ steps:
 #    addSpnToEnvironment: true
 #    workingDirectory: 'ui/build'
 
-- template: /build-pipeline/deploy.yml
+- template: ./build-pipeline/deploy.yml
   parameters:
     subscription: 'Visual Studio Enterprise(1e23aa72-fb0d-424b-a48c-0de4916aee72)'
     destinationBlobContainer: 'sharethrift'
@@ -57,7 +57,7 @@ steps:
     cdnResourceGroup: 'sharethrift'
     cdnName: 'sharethrift'
 
-- template: /build-pipeline/deploy.yml
+- template: ./build-pipeline/deploy.yml
   parameters:
     subscription: 'Visual Studio Enterprise(1e23aa72-fb0d-424b-a48c-0de4916aee72)'
     destinationBlobContainer: 'sharethriftqa'
