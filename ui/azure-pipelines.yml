@@ -37,17 +37,17 @@ steps:
     REACT_APP_AAD_REDIRECT_URI: $(REACT_APP_AAD_REDIRECT_URI)
     REACT_APP_AAD_SCOPES: $(REACT_APP_AAD_SCOPES)
 
-- task: AzureCLI@2
-  displayName: Copy to Blob
-  inputs:
-    azureSubscription: 'Visual Studio Enterprise(1e23aa72-fb0d-424b-a48c-0de4916aee72)'
-    scriptType: 'pscore'
-    scriptLocation: 'inlineScript'
-    inlineScript: |
-      az storage blob upload-batch --destination `$web --account-name sharethrift --source . --auth-mode login
-      az cdn endpoint purge --profile-name sharethrift -g rg-sharethrift -n sharethrift --content-paths "/*"
-    addSpnToEnvironment: true
-    workingDirectory: 'ui/build'
+#- task: AzureCLI@2
+#  displayName: Copy to Blob
+#  inputs:
+#    azureSubscription: 'Visual Studio Enterprise(1e23aa72-fb0d-424b-a48c-0de4916aee72)'
+#    scriptType: 'pscore'
+#    scriptLocation: 'inlineScript'
+#    inlineScript: |
+#      az storage blob upload-batch --destination `$web --account-name sharethrift --source . --auth-mode login
+#      az cdn endpoint purge --profile-name sharethrift -g rg-sharethrift -n sharethrift --content-paths "/*"
+#    addSpnToEnvironment: true
+#    workingDirectory: 'ui/build'
 
 - template: /build-pipeline/deploy.yml
   parameters:
