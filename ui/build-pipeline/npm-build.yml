@@ -1,8 +1,12 @@
 parameters:
 - name: buildPath
+  type: string
 - name: archivePath
+  type: string
 - name: archiveName
+  type: string
 - name: buildEnvSettings
+  type: object
 
 steps:
 
