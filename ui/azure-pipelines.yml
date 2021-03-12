@@ -37,6 +37,38 @@ steps:
     REACT_APP_AAD_REDIRECT_URI: $(REACT_APP_AAD_REDIRECT_URI)
     REACT_APP_AAD_SCOPES: $(REACT_APP_AAD_SCOPES)
 
+
+
+
+- template: ./build-pipeline/npm-build.yml
+  parameters:
+    buildPath: ui
+    archivePath: 'ui/build'
+    archiveName: 'prod'
+    buildEnvSettings:
+      INLINE_RUNTIME_CHUNK: false
+      REACT_APP_AAD_APP_CLIENTID: $(REACT_APP_AAD_APP_CLIENTID)
+      REACT_APP_AAD_DIRECTORY_TENANTID: $(REACT_APP_AAD_DIRECTORY_TENANTID)
+      REACT_APP_AAD_REDIRECT_URI: $(REACT_APP_AAD_REDIRECT_URI)
+      REACT_APP_AAD_SCOPES: $(REACT_APP_AAD_SCOPES)
+
+- template: ./build-pipeline/deploy.yml
+  parameters:
+    subscription: $(azureSubscription)
+    destinationBlobContainer: 'sharethrift'
+    cdnProfile: 'sharethrift'
+    cdnResourceGroup: 'rg-sharethrift'
+    cdnName: 'sharethrift'
+
+
+- template: ./build-pipeline/deploy.yml
+  parameters:
+    subscription: $(azureSubscription)
+    destinationBlobContainer: 'sharethriftqa'
+    cdnProfile: 'sharethrift'
+    cdnResourceGroup: 'rg-sharethrift'
+    cdnName: 'sharethriftqa'
+
 #    azureSubscription: 'Visual Studio Enterprise(1e23aa72-fb0d-424b-a48c-0de4916aee72)'
 #- task: AzureCLI@2
 #  displayName: Copy to Blob
@@ -49,19 +81,3 @@ steps:
 #      az cdn endpoint purge --profile-name sharethrift -g rg-sharethrift -n sharethrift --content-paths "/*"
 #    addSpnToEnvironment: true
 #    workingDirectory: 'ui/build'
-
-- template: ./build-pipeline/deploy.yml
-  parameters:
-    subscription: $(azureSubscription)
-    destinationBlobContainer: 'sharethrift'
-    cdnProfile: 'sharethrift'
-    cdnResourceGroup: 'rg-sharethrift'
-    cdnName: 'sharethrift'
-
-- template: ./build-pipeline/deploy.yml
-  parameters:
-    subscription: $(azureSubscription)
-    destinationBlobContainer: 'sharethriftqa'
-    cdnProfile: 'sharethrift'
-    cdnResourceGroup: 'rg-sharethrift'
-    cdnName: 'sharethriftqa'
