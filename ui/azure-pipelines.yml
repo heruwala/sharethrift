@@ -55,7 +55,7 @@ steps:
     subscription: $(azureSubscription)
     destinationBlobContainer: 'sharethrift'
     cdnProfile: 'sharethrift'
-    cdnResourceGroup: 'sharethrift'
+    cdnResourceGroup: 'rg-sharethrift'
     cdnName: 'sharethrift'
 
 - template: ./build-pipeline/deploy.yml
@@ -63,5 +63,5 @@ steps:
     subscription: $(azureSubscription)
     destinationBlobContainer: 'sharethriftqa'
     cdnProfile: 'sharethrift'
-    cdnResourceGroup: 'sharethrift'
+    cdnResourceGroup: 'rg-sharethrift'
     cdnName: 'sharethriftqa'
