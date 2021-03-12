@@ -1,8 +1,8 @@
 parameters:
-  name:buildPath
-  name:archivePath
-  name:archiveName
-  name:buildEnvSettings
+- name:buildPath
+- name:archivePath
+- name:archiveName
+- name:buildEnvSettings
 
 steps:
 
