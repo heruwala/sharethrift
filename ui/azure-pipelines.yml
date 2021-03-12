@@ -20,22 +20,22 @@ pool:
   vmImage: 'ubuntu-latest'
 
 steps:
-- task: NodeTool@0
-  inputs:
-    versionSpec: '12.x'
-  displayName: 'Install Node.js'
+#- task: NodeTool@0
+#  inputs:
+#    versionSpec: '12.x'
+#  displayName: 'Install Node.js'
 
-- script: |
-    npm install
-    npm run build
-  displayName: 'npm install and build'
-  workingDirectory: ui
-  env:
-    INLINE_RUNTIME_CHUNK: false
-    REACT_APP_AAD_APP_CLIENTID: $(REACT_APP_AAD_APP_CLIENTID)
-    REACT_APP_AAD_DIRECTORY_TENANTID: $(REACT_APP_AAD_DIRECTORY_TENANTID)
-    REACT_APP_AAD_REDIRECT_URI: $(REACT_APP_AAD_REDIRECT_URI)
-    REACT_APP_AAD_SCOPES: $(REACT_APP_AAD_SCOPES)
+#- script: |
+#    npm install
+#    npm run build
+#  displayName: 'npm install and build'
+#  workingDirectory: ui
+#  env:
+#    INLINE_RUNTIME_CHUNK: false
+#    REACT_APP_AAD_APP_CLIENTID: $(REACT_APP_AAD_APP_CLIENTID)
+#    REACT_APP_AAD_DIRECTORY_TENANTID: $(REACT_APP_AAD_DIRECTORY_TENANTID)
+#    REACT_APP_AAD_REDIRECT_URI: $(REACT_APP_AAD_REDIRECT_URI)
+#    REACT_APP_AAD_SCOPES: $(REACT_APP_AAD_SCOPES)
 
 
 
