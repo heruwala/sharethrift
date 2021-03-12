@@ -12,6 +12,7 @@ steps:
 
 - bash: |
     echo ${{parameters.buildEnvSettings.INLINE_RUNTIME_CHUNK}}
+    echo "hello world"
 
 - task: NodeTool@0
   inputs:
