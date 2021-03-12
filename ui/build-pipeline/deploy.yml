@@ -1,6 +1,5 @@
 parameters:
 - name: subscription
-  type: string
   default: false
 - name: destinationBlobContainer
   type: string
