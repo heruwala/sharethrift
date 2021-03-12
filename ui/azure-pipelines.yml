@@ -28,16 +28,6 @@ steps:
 - script: |
     npm install
     npm run build
-- task: AzureCLI@2
-  inputs:
-    azureSubscription: '$(azureSubscription)'
-    scriptType: 'pscore'
-    scriptLocation: 'inlineScript'
-    inlineScript: |
-      az storage blob upload-batch --destination `$web --account-name sharethrift --source . --auth-mode login
-      az cdn endpoint purge --profile-name sharethrift -g rg-sharethrift -n sharethrift --content-paths "/*"
-    addSpnToEnvironment: true
-    workingDirectory: 'ui/build'
   displayName: 'npm install and build'
   workingDirectory: ui
   env:
