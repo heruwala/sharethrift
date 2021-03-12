@@ -1,0 +1,14 @@
+
+parameters:
+  environment:
+  environmentVars:
+  cdnDetails:
+
+.build_template:
+  - script: |
+      npm install
+      npm run build
+    displayName: 'npm install and build'
+    workingDirectory: ui
+    env:
+      INLINE_RUNTIME_CHUNK: false
