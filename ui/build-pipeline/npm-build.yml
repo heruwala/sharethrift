@@ -11,7 +11,7 @@ parameters:
 steps:
 
 - bash: |
-    echo ${{parameters.buildEnvSettings}}
+    echo ${{parameters.buildEnvSettings.INLINE_RUNTIME_CHUNK}}
 
 - task: NodeTool@0
   inputs:
