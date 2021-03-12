@@ -10,6 +10,9 @@ parameters:
 
 steps:
 
+- bash: |
+    echo ${{parameters.buildEnvSettings}}
+
 - task: NodeTool@0
   inputs:
     versionSpec: '14.x'
