@@ -18,13 +18,13 @@ steps:
 - task: CopyFiles@2
   inputs:
     SourceFolder: '$(Pipeline.Workspace)'
-    Contents: '**/*.zip'
+    Contents: '**/$(Build.BuildId)-${{parameters.archiveName}}.zip'
     TargetFolder: '$(Build.ArtifactStagingDirectory)'
     flattenFolders: true
 
 - task: ExtractFiles@1
   inputs:
-    archiveFilePatterns: '**/$(Build.BuildId)-${{parameters.archiveName}}.zip'
+    archiveFilePatterns: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-${{parameters.archiveName}}.zip'
     destinationFolder: '.'
     cleanDestinationFolder: true
     overwriteExistingFiles: false
