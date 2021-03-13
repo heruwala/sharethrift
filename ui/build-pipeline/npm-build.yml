@@ -25,6 +25,7 @@ steps:
   inputs:
     targetType: 'inline'
     script: |
+      echo printenv
       echo | pwd
       echo | ls -la ./
       npm install
