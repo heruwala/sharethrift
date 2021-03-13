@@ -29,7 +29,7 @@ steps:
       npm build
       echo | ls -la build
       echo | pwd
-    workingDirectory: ${{parameters.buildPath}}
+    workingDirectory: '$(Build.SourcesDirectory)/${{parameters.buildPath}}'
   env: ${{parameters.buildEnvSettings}}
 
 #- script: |
