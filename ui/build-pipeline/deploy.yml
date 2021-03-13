@@ -25,7 +25,7 @@ steps:
 - task: ExtractFiles@1
   inputs:
     archiveFilePatterns: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-${{parameters.archiveName}}.zip'
-    destinationFolder: '.'
+    destinationFolder: './deploy'
     cleanDestinationFolder: true
     overwriteExistingFiles: false
 
@@ -36,7 +36,7 @@ steps:
     scriptType: 'pscore'
     scriptLocation: 'inlineScript'
     inlineScript: |
-      az storage blob upload-batch --destination `$web --account-name ${{parameters.destinationBlobContainer}} --source . --auth-mode login
+      az storage blob upload-batch --destination `$web --account-name ${{parameters.destinationBlobContainer}} --source ./deploy --auth-mode login
       az cdn endpoint purge --profile-name ${{parameters.cdnProfile}} -g ${{parameters.cdnResourceGroup}} -n ${{parameters.cdnName}} --content-paths "/*"
     addSpnToEnvironment: true
     workingDirectory: 'ui/build'
