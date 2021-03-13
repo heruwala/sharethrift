@@ -25,7 +25,7 @@ steps:
 - task: ExtractFiles@1
   inputs:
     archiveFilePatterns: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-${{parameters.archiveName}}.zip'
-    destinationFolder: './deploy'
+    destinationFolder: '$(Build.ArtifactStagingDirectory)/deploy'
     cleanDestinationFolder: true
     overwriteExistingFiles: false
 
