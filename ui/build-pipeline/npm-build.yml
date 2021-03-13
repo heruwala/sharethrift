@@ -27,6 +27,8 @@ steps:
     script: |
       npm install
       npm build
+      echo | ls -la build
+      echo | pwd
     workingDirectory: ${{parameters.buildPath}}
   env: ${{parameters.buildEnvSettings}}
 
