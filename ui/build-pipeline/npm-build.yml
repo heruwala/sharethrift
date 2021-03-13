@@ -28,7 +28,7 @@ steps:
       echo | pwd
       echo | ls -la ./
       npm install
-      npm build
+      npm run-script build
       echo | ls -la ./build
     workingDirectory: '$(Build.SourcesDirectory)/${{parameters.buildPath}}'
   env: ${{parameters.buildEnvSettings}}
