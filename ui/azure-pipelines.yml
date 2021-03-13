@@ -47,7 +47,7 @@ stages:
     steps:
     - template: ./build-pipeline/npm-build.yml
       parameters:
-        buildPath: ui
+        buildPath: 'ui'
         archivePath: 'ui/build'
         archiveName: 'prod'
         buildEnvSettings:
