@@ -19,12 +19,23 @@ steps:
     versionSpec: '14.x'
   displayName: 'Install Node.js'
 
-- script: |
-    npm install
-    npm run build
+
+- task: Bash@3
   displayName: 'npm install and build'
-  workingDirectory: ${{parameters.buildPath}}
+  inputs:
+    targetType: 'inline'
+    script: |
+      npm install
+      npm build
+    workingDirectory: ${{parameters.buildPath}}
   env: ${{parameters.buildEnvSettings}}
+
+#- script: |
+#    npm install
+#    npm run build
+##  displayName: 'npm install and build'
+#  workingDirectory: ${{parameters.buildPath}}
+#  env: ${{parameters.buildEnvSettings}}
 
 - task: ArchiveFiles@2
   inputs:
