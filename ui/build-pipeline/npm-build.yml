@@ -25,10 +25,11 @@ steps:
   inputs:
     targetType: 'inline'
     script: |
+      echo | pwd
+      echo | ls -la ./
       npm install
       npm build
-      echo | ls -la build
-      echo | pwd
+      echo | ls -la ./build
     workingDirectory: '$(Build.SourcesDirectory)/${{parameters.buildPath}}'
   env: ${{parameters.buildEnvSettings}}
 
