@@ -3,7 +3,7 @@ parameters:
   default: false
 - name: destinationBlobContainer
   type: string
-- name: sourceFile
+- name: archiveName
   type: string
 - name: cdnProfile
   type: string
@@ -15,9 +15,16 @@ parameters:
 
 steps:
 
+- task: CopyFiles@2
+  inputs:
+    SourceFolder: '$(Pipeline.Workspace)'
+    Contents: '**/*.zip'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)'
+    flattenFolders: true
+
 - task: ExtractFiles@1
   inputs:
-    archiveFilePatterns: '**/${{parameters.sourceFile}}.zip'
+    archiveFilePatterns: '**/$(Build.BuildId)-${{parameters.archiveName}}.zip'
     destinationFolder: '.'
     cleanDestinationFolder: true
     overwriteExistingFiles: false
