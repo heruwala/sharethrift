@@ -10,37 +10,24 @@ parameters:
 
 steps:
 
-- bash: |
-    echo ${{parameters.buildEnvSettings.INLINE_RUNTIME_CHUNK}}
-    echo "hello world"
-
+# Ensure the LTS version of Node is installed
 - task: NodeTool@0
   inputs:
     versionSpec: '14.x'
   displayName: 'Install Node.js'
 
-
+# Build the project, ensuring envrionment variables are baked in.
 - task: Bash@3
   displayName: 'npm install and build'
   inputs:
     targetType: 'inline'
     script: |
-      echo | printenv
-      echo | pwd
-      echo | ls -la ./
       npm install
       npm run-script build
-      echo | ls -la ./build
     workingDirectory: '$(Build.SourcesDirectory)/${{parameters.buildPath}}'
   env: ${{parameters.buildEnvSettings}}
 
-#- script: |
-#    npm install
-#    npm run build
-##  displayName: 'npm install and build'
-#  workingDirectory: ${{parameters.buildPath}}
-#  env: ${{parameters.buildEnvSettings}}
-
+# Add the files to be deployed to a zip archive to be used later as part of deployment
 - task: ArchiveFiles@2
   inputs:
     rootFolderOrFile: '$(Build.SourcesDirectory)/${{parameters.archivePath}}'
