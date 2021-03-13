@@ -73,16 +73,11 @@ stages:
       runOnce:    #rolling, canary are the other strategies that are supported
         deploy:
           steps:
-          - task: CopyFiles@2
-            inputs:
-              SourceFolder: '$(Pipeline.Workspace)'
-              Contents: '**/*.zip'
-              TargetFolder: '$(Build.ArtifactStagingDirectory)'
-              flattenFolders: true
           - template: ./build-pipeline/deploy.yml
             parameters:
               subscription: $(azureSubscription)
               destinationBlobContainer: 'sharethriftqa'
+              archiveName: 'prod'
               cdnProfile: 'sharethrift'
               cdnResourceGroup: 'rg-sharethrift'
               cdnName: 'sharethriftqa'
@@ -98,16 +93,11 @@ stages:
       runOnce:    #rolling, canary are the other strategies that are supported
         deploy:
           steps:
-          - task: CopyFiles@2
-            inputs:
-              SourceFolder: '$(Pipeline.Workspace)'
-              Contents: '**/*.zip'
-              TargetFolder: '$(Build.ArtifactStagingDirectory)'
-              flattenFolders: true
           - template: ./build-pipeline/deploy.yml
             parameters:
               subscription: $(azureSubscription)
               destinationBlobContainer: 'sharethrift'
+              archiveName: 'prod'
               cdnProfile: 'sharethrift'
               cdnResourceGroup: 'rg-sharethrift'
               cdnName: 'sharethrift'
