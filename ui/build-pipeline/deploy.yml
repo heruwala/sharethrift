@@ -3,6 +3,8 @@ parameters:
   default: false
 - name: destinationBlobContainer
   type: string
+- name: sourceFile
+  type: string
 - name: cdnProfile
   type: string
 - name: cdnResourceGroup
@@ -12,6 +14,14 @@ parameters:
 
 
 steps:
+
+- task: ExtractFiles@1
+  inputs:
+    archiveFilePatterns: '**/${{parameters.sourceFile}}.zip'
+    destinationFolder: '.'
+    cleanDestinationFolder: true
+    overwriteExistingFiles: false
+
 - task: AzureCLI@2
   displayName: Copy to Blob
   inputs:
