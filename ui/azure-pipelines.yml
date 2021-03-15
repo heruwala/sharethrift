@@ -44,7 +44,7 @@ stages:
   jobs:
   - deployment: deploy_qa_job
     displayName: Deploy QA Job
-    environment: ui-qa 
+    environment: verify-cs-qa
     strategy:
       runOnce:    #rolling, canary are the other strategies that are supported
         deploy:
@@ -64,7 +64,7 @@ stages:
   jobs:
   - deployment: deploy_prod_job
     displayName: Deploy Prod Job
-    environment: ui-prod
+    environment: verify-cs-prod
     strategy:
       runOnce:    #rolling, canary are the other strategies that are supported
         deploy:
