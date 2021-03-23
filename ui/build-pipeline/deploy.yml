@@ -12,7 +12,6 @@ parameters:
 - name: cdnName
   type: string
 
-
 steps:
 
 # Get the zip file for with proper environment settings already compiled in it.
