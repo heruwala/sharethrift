@@ -42,6 +42,9 @@ stages:
           REACT_APP_AAD_REDIRECT_URI: $(REACT_APP_AAD_REDIRECT_URI)
           REACT_APP_AAD_SCOPES: $(REACT_APP_AAD_SCOPES)
     - task: SonarCloudAnalyze@1
+    - task: SonarCloudPublish@1
+      inputs:
+        pollingTimeoutSec: '300'
     - task: PublishBuildArtifacts@1
       inputs:
         PathtoPublish: '$(Build.ArtifactStagingDirectory)'
