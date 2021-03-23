@@ -21,6 +21,15 @@ stages:
   - job: build_job
     displayName: Build Job
     steps:
+    - task: SonarCloudPrepare@1
+      inputs:
+        SonarCloud: 'sonarcloud'
+        organization: 'simnova'
+        scannerMode: 'CLI'
+        configMode: 'manual'
+        cliProjectKey: 'sharethrift-ui'
+        cliProjectName: 'Sharethrift UI'
+        cliSources: './ui/src'
     - template: ./build-pipeline/npm-build.yml
       parameters:
         buildPath: 'ui'
@@ -32,6 +41,7 @@ stages:
           REACT_APP_AAD_DIRECTORY_TENANTID: $(REACT_APP_AAD_DIRECTORY_TENANTID)
           REACT_APP_AAD_REDIRECT_URI: $(REACT_APP_AAD_REDIRECT_URI)
           REACT_APP_AAD_SCOPES: $(REACT_APP_AAD_SCOPES)
+    - task: SonarCloudAnalyze@1
     - task: PublishBuildArtifacts@1
       inputs:
         PathtoPublish: '$(Build.ArtifactStagingDirectory)'
