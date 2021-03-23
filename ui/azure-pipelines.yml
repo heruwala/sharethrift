@@ -30,6 +30,11 @@ stages:
         cliProjectKey: 'sharethrift-ui'
         cliProjectName: 'sharethrift-ui'
         cliSources: './ui/src'
+    - task: JavaToolInstaller@0
+      inputs:
+        versionSpec: '11'
+        jdkArchitectureOption: 'x64'
+        jdkSourceOption: 'PreInstalled'
     - template: ./build-pipeline/npm-build.yml
       parameters:
         buildPath: 'ui'
