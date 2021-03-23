@@ -28,7 +28,7 @@ stages:
         scannerMode: 'CLI'
         configMode: 'manual'
         cliProjectKey: 'sharethrift-ui'
-        cliProjectName: 'Sharethrift UI'
+        cliProjectName: 'sharethrift-ui'
         cliSources: './ui/src'
     - template: ./build-pipeline/npm-build.yml
       parameters:
