@@ -57,6 +57,16 @@ stages:
         fi
       displayName: 'Build extensions'
 
+    - task: SonarCloudPrepare@1
+      inputs:
+        SonarCloud: 'sonarcloud'
+        organization: 'simnova'
+        scannerMode: 'CLI'
+        configMode: 'manual'
+        cliProjectKey: 'sharethrift-data-access'
+        cliProjectName: 'sharethrift-data-access'
+        cliSources: './data-access'
+
     - task: Bash@3
       displayName: 'Prepare binaries'
       inputs:
@@ -65,7 +75,11 @@ stages:
           npm install
           npm run build:production
         workingDirectory: 'data-access'
-      
+
+    - task: SonarCloudAnalyze@1
+    - task: SonarCloudPublish@1
+      inputs:
+        pollingTimeoutSec: '300'      
       
     - task: ArchiveFiles@2
       displayName: 'Archive files'

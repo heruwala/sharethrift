@@ -1,8 +1,3 @@
-# Node.js
-# Build a general Node.js project with npm.
-# Add steps that analyze code, save build artifacts, deploy, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
-
 trigger:
  paths:
    include:
@@ -19,32 +14,79 @@ variables:
 pool:
   vmImage: 'ubuntu-latest'
 
-steps:
-- task: NodeTool@0
-  inputs:
-    versionSpec: '12.x'
-  displayName: 'Install Node.js'
+stages:
+- stage: build_stage
+  displayName: Build Stage
+  jobs:
+  - job: build_job
+    displayName: Build Job
+    steps:
+    - task: SonarCloudPrepare@1
+      inputs:
+        SonarCloud: 'sonarcloud'
+        organization: 'simnova'
+        scannerMode: 'CLI'
+        configMode: 'manual'
+        cliProjectKey: 'sharethrift-ui'
+        cliProjectName: 'sharethrift-ui'
+        cliSources: './ui/src'
+    - template: ./build-pipeline/npm-build.yml
+      parameters:
+        buildPath: 'ui'
+        archivePath: 'ui/build'
+        archiveName: 'prod'
+        buildEnvSettings:
+          INLINE_RUNTIME_CHUNK: 'false'
+          REACT_APP_AAD_APP_CLIENTID: $(REACT_APP_AAD_APP_CLIENTID)
+          REACT_APP_AAD_DIRECTORY_TENANTID: $(REACT_APP_AAD_DIRECTORY_TENANTID)
+          REACT_APP_AAD_REDIRECT_URI: $(REACT_APP_AAD_REDIRECT_URI)
+          REACT_APP_AAD_SCOPES: $(REACT_APP_AAD_SCOPES)
+    - task: SonarCloudAnalyze@1
+    - task: SonarCloudPublish@1
+      inputs:
+        pollingTimeoutSec: '300'
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+        ArtifactName: 'www'
+        publishLocation: 'Container'
 
-- script: |
-    npm install
-    npm run build
-  displayName: 'npm install and build'
-  workingDirectory: ui
-  env:
-    INLINE_RUNTIME_CHUNK: false
-    REACT_APP_AAD_APP_CLIENTID: $(REACT_APP_AAD_APP_CLIENTID)
-    REACT_APP_AAD_DIRECTORY_TENANTID: $(REACT_APP_AAD_DIRECTORY_TENANTID)
-    REACT_APP_AAD_REDIRECT_URI: $(REACT_APP_AAD_REDIRECT_URI)
-    REACT_APP_AAD_SCOPES: $(REACT_APP_AAD_SCOPES)
+- stage: deploy_qa_stage
+  dependsOn: build_stage
+  displayName: Deploy QA Stage
+  jobs:
+  - deployment: deploy_qa_job
+    displayName: Deploy QA Job
+    environment: verify-cs-qa
+    strategy:
+      runOnce:    #rolling, canary are the other strategies that are supported
+        deploy:
+          steps:
+          - template: ./build-pipeline/deploy.yml
+            parameters:
+              subscription: $(azureSubscription)
+              destinationBlobContainer: 'sharethriftqa'
+              archiveName: 'prod'
+              cdnProfile: 'sharethrift'
+              cdnResourceGroup: 'rg-sharethrift'
+              cdnName: 'sharethriftqa'
 
-- task: AzureCLI@2
-  displayName: Copy to Blob
-  inputs:
-    azureSubscription: 'Visual Studio Enterprise(1e23aa72-fb0d-424b-a48c-0de4916aee72)'
-    scriptType: 'pscore'
-    scriptLocation: 'inlineScript'
-    inlineScript: |
-      az storage blob upload-batch --destination `$web --account-name sharethrift --source . --auth-mode login
-      az cdn endpoint purge --profile-name sharethrift -g rg-sharethrift -n sharethrift --content-paths "/*"
-    addSpnToEnvironment: true
-    workingDirectory: 'ui/build'
+- stage: deploy_prod_stage
+  dependsOn: deploy_qa_stage
+  displayName: Deploy Prod Stage
+  jobs:
+  - deployment: deploy_prod_job
+    displayName: Deploy Prod Job
+    environment: verify-cs-prod
+    strategy:
+      runOnce:    #rolling, canary are the other strategies that are supported
+        deploy:
+          steps:
+          - template: ./build-pipeline/deploy.yml
+            parameters:
+              subscription: $(azureSubscription)
+              destinationBlobContainer: 'sharethrift'
+              archiveName: 'prod'
+              cdnProfile: 'sharethrift'
+              cdnResourceGroup: 'rg-sharethrift'
+              cdnName: 'sharethrift'

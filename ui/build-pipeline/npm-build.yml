@@ -1,0 +1,37 @@
+parameters:
+- name: buildPath
+  type: string
+- name: archivePath
+  type: string
+- name: archiveName
+  type: string
+- name: buildEnvSettings
+  type: object
+
+steps:
+
+# Ensure the LTS version of Node is installed
+- task: NodeTool@0
+  inputs:
+    versionSpec: '14.x'
+  displayName: 'Install Node.js'
+
+# Build the project, ensuring envrionment variables are baked in.
+- task: Bash@3
+  displayName: 'npm install and build'
+  inputs:
+    targetType: 'inline'
+    script: |
+      npm install
+      npm run-script build
+    workingDirectory: '$(Build.SourcesDirectory)/${{parameters.buildPath}}'
+  env: ${{parameters.buildEnvSettings}}
+
+# Add the files to be deployed to a zip archive to be used later as part of deployment
+- task: ArchiveFiles@2
+  inputs:
+    rootFolderOrFile: '$(Build.SourcesDirectory)/${{parameters.archivePath}}'
+    includeRootFolder: false
+    archiveType: 'zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-${{parameters.archiveName}}.zip'
+    replaceExistingArchive: true
