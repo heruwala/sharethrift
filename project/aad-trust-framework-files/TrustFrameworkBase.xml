@@ -288,16 +288,6 @@
         <UserInputType>TextBox</UserInputType>
       </ClaimType>
 
-      <ClaimType Id="bodyData">
-        <DisplayName>Body Data</DisplayName>
-        <DataType>string</DataType>
-        <DefaultPartnerClaimTypes>
-          <Protocol Name="OAuth2" PartnerClaimType="bodyData" />
-          <Protocol Name="OpenIdConnect" PartnerClaimType="bodyData" />
-          <Protocol Name="SAML2" PartnerClaimType="http://schemas.microsoft.com/identity/claims/bodyData" />
-        </DefaultPartnerClaimTypes>
-      </ClaimType>
-
     </ClaimsSchema>
 
     <ClaimsTransformations>
@@ -412,37 +402,7 @@
         in this section, then it cannot be used in a technical policy.
     -->
   <ClaimsProviders>
-    <ClaimsProvider>
-      <DisplayName>REST APIs</DisplayName>
-      <TechnicalProfiles>
-      <TechnicalProfile Id="REST-SignIn">
-      <DisplayName>Validate user input data and return loyaltyNumber claim</DisplayName>
-      <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.RestfulProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
-      <Metadata>
-        <Item Key="ServiceUrl">https://c160c2e8440b.ngrok.io/api/Identity/testpost</Item>
-        <Item Key="AuthenticationType">Basic</Item>
-        <Item Key="SendClaimsIn">Body</Item>
-        <Item Key="AllowInsecureAuthInProduction">false</Item>
-      </Metadata>
-      <CryptographicKeys>
-        <Key Id="BasicAuthenticationUsername" StorageReferenceId="B2C_1A_RestApiUsername" />
-        <Key Id="BasicAuthenticationPassword" StorageReferenceId="B2C_1A_RestApiPassword" />
-      </CryptographicKeys>
-      <InputClaims>
-        <InputClaim ClaimTypeReferenceId="objectId" PartnerClaimType="oid"/>
-        <InputClaim ClaimTypeReferenceId="email" />
-      </InputClaims>
-      <OutputClaims>
-        <OutputClaim ClaimTypeReferenceId="email" />
-        <OutputClaim ClaimTypeReferenceId="displayName" PartnerClaimType="displayName" />
-        <OutputClaim ClaimTypeReferenceId="givenName" PartnerClaimType="givenName" />
-        <OutputClaim ClaimTypeReferenceId="surname" PartnerClaimType="surname" />
-        <OutputClaim ClaimTypeReferenceId="bodyData" />
-      </OutputClaims>
-      <UseTechnicalProfileForSessionManagement ReferenceId="SM-Noop" />
-      </TechnicalProfile>
-      </TechnicalProfiles>
-    </ClaimsProvider>
+ 
     <ClaimsProvider>
       <DisplayName>Local Account SignIn</DisplayName>
       <TechnicalProfiles>
@@ -669,32 +629,6 @@
       <DisplayName>Local Account</DisplayName>
       <TechnicalProfiles>
 
-
-        <TechnicalProfile Id="SelfAsserted-LocalAccountSignin-Username">
-          <DisplayName>Local Account Signin</DisplayName>
-          <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.SelfAssertedAttributeProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
-          <Metadata>
-            <Item Key="SignUpTarget">SignUpWithLogonEmailExchange</Item>
-            <Item Key="setting.operatingMode">Username</Item>
-            <Item Key="ContentDefinitionReferenceId">api.selfasserted</Item>
-          </Metadata>
-          <IncludeInSso>false</IncludeInSso>
-          <InputClaims>
-            <InputClaim ClaimTypeReferenceId="signInName" />
-          </InputClaims>
-          <OutputClaims>
-            <OutputClaim ClaimTypeReferenceId="signInName" Required="true" />
-            <OutputClaim ClaimTypeReferenceId="password" Required="true" />
-            <OutputClaim ClaimTypeReferenceId="objectId" />
-            <OutputClaim ClaimTypeReferenceId="authenticationSource" />
-            <OutputClaim ClaimTypeReferenceId="bodyData" DefaultValue="{}"/>
-          </OutputClaims>
-          <ValidationTechnicalProfiles>
-            <ValidationTechnicalProfile ReferenceId="login-NonInteractive" />
-          </ValidationTechnicalProfiles>
-          <UseTechnicalProfileForSessionManagement ReferenceId="SM-AAD" />
-        </TechnicalProfile>
-
         <TechnicalProfile Id="LocalAccountSignUpWithLogonEmail">
           <DisplayName>Email signup</DisplayName>
           <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.SelfAssertedAttributeProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
@@ -747,11 +681,9 @@
             <OutputClaim ClaimTypeReferenceId="password" Required="true" />
             <OutputClaim ClaimTypeReferenceId="objectId" />
             <OutputClaim ClaimTypeReferenceId="authenticationSource" />
-            <OutputClaim ClaimTypeReferenceId="bodyData" />
           </OutputClaims>
           <ValidationTechnicalProfiles>
             <ValidationTechnicalProfile ReferenceId="login-NonInteractive" />
-            <ValidationTechnicalProfile ReferenceId="REST-SignIn" />
           </ValidationTechnicalProfiles>
           <UseTechnicalProfileForSessionManagement ReferenceId="SM-AAD" />
         </TechnicalProfile>
@@ -880,7 +812,7 @@
             <ClaimsProviderSelection ValidationClaimsExchangeId="LocalAccountSigninEmailExchange" />
           </ClaimsProviderSelections>
           <ClaimsExchanges>
-            <ClaimsExchange Id="LocalAccountSigninEmailExchange" TechnicalProfileReferenceId="SelfAsserted-LocalAccountSignin-Username" />
+            <ClaimsExchange Id="LocalAccountSigninEmailExchange" TechnicalProfileReferenceId="SelfAsserted-LocalAccountSignin-Email" />
           </ClaimsExchanges>
         </OrchestrationStep>
 
@@ -902,14 +834,8 @@
             <ClaimsExchange Id="AADUserReadWithObjectId" TechnicalProfileReferenceId="AAD-UserReadUsingObjectId" />
           </ClaimsExchanges>
         </OrchestrationStep>
-
-        <OrchestrationStep Order="4" Type="ClaimsExchange">
-          <ClaimsExchanges>
-            <ClaimsExchange Id="RESTGetProfile" TechnicalProfileReferenceId="REST-SignIn" />
-          </ClaimsExchanges>
-        </OrchestrationStep>
  
-        <OrchestrationStep Order="5" Type="SendClaims" CpimIssuerTechnicalProfileReferenceId="JwtIssuer" />
+        <OrchestrationStep Order="4" Type="SendClaims" CpimIssuerTechnicalProfileReferenceId="JwtIssuer" />
     
       </OrchestrationSteps>
       <ClientDefinition ReferenceId="DefaultWeb" />
