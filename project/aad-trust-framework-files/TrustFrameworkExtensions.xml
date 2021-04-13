@@ -14,6 +14,15 @@
           <Protocol Name="SAML2" PartnerClaimType="http://schemas.microsoft.com/identity/claims/bodyData" />
         </DefaultPartnerClaimTypes>
       </ClaimType>
+      <ClaimType Id="callRestAPI">
+        <DisplayName>Call Rest API</DisplayName>
+        <DataType>boolean</DataType>
+        <DefaultPartnerClaimTypes>
+          <Protocol Name="OAuth2" PartnerClaimType="callRestAPI" />
+          <Protocol Name="OpenIdConnect" PartnerClaimType="callRestAPI" />
+          <Protocol Name="SAML2" PartnerClaimType="http://schemas.microsoft.com/identity/claims/callRestAPI" />
+        </DefaultPartnerClaimTypes>
+      </ClaimType>
 		</ClaimsSchema>
     <ContentDefinitions>
       <ContentDefinition Id="api.error">
@@ -116,6 +125,7 @@
 						<OutputClaim ClaimTypeReferenceId="objectId" />
 						<OutputClaim ClaimTypeReferenceId="authenticationSource" />
 						<OutputClaim ClaimTypeReferenceId="bodyData" />
+            <OutputClaim ClaimTypeReferenceId="callRestAPI" />
 					</OutputClaims>
 					<ValidationTechnicalProfiles>
 						<ValidationTechnicalProfile ReferenceId="login-NonInteractive" />
@@ -166,7 +176,7 @@
           <DisplayName>Validate user input data and return loyaltyNumber claim</DisplayName>
           <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.RestfulProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
           <Metadata>
-            <Item Key="ServiceUrl">https://www.soscale.com/api/B2CProfileLookup/logIn</Item>
+            <Item Key="ServiceUrl">https://0c8098eaf273.ngrok.io/api/B2CProfileLookup/logIn</Item>
             <Item Key="AuthenticationType">Basic</Item>
             <Item Key="SendClaimsIn">Body</Item>
             <Item Key="AllowInsecureAuthInProduction">false</Item>
@@ -177,7 +187,7 @@
           </CryptographicKeys>
           <InputClaims>
             <InputClaim ClaimTypeReferenceId="objectId" PartnerClaimType="oid" />
-            <InputClaim ClaimTypeReferenceId="email" />
+            <InputClaim ClaimTypeReferenceId="signInName" PartnerClaimType="signInNames.userName" />
           </InputClaims>
           <OutputClaims>
             <OutputClaim ClaimTypeReferenceId="email" />
@@ -185,6 +195,7 @@
             <OutputClaim ClaimTypeReferenceId="givenName" PartnerClaimType="givenName" />
             <OutputClaim ClaimTypeReferenceId="surname" PartnerClaimType="surname" />
             <OutputClaim ClaimTypeReferenceId="bodyData" />
+            <OutputClaim ClaimTypeReferenceId="callRestAPI" />
           </OutputClaims>
           <UseTechnicalProfileForSessionManagement ReferenceId="SM-Noop" />
         </TechnicalProfile>
@@ -257,8 +268,15 @@
             <ClaimsExchange Id="AADUserReadWithObjectId" TechnicalProfileReferenceId="AAD-UserReadUsingObjectId" />
           </ClaimsExchanges>
         </OrchestrationStep>
- 
-				<OrchestrationStep Order="4" Type="ClaimsExchange">
+
+        <OrchestrationStep Order="4" Type="ClaimsExchange">
+          <Preconditions>
+            <Precondition Type="ClaimEquals" ExecuteActionsIf="true">
+              <Value>callRestAPI</Value>
+              <Value>False</Value>
+              <Action>SkipThisOrchestrationStep</Action>
+            </Precondition>
+          </Preconditions>
           <ClaimsExchanges>
             <ClaimsExchange Id="RESTGetProfile" TechnicalProfileReferenceId="REST-SignIn" />
           </ClaimsExchanges>
