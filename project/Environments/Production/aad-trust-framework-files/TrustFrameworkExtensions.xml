@@ -1,6 +1,6 @@
-﻿<TrustFrameworkPolicy xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.microsoft.com/online/cpim/schemas/2013/06" PolicySchemaVersion="0.3.0.0" TenantId="{Settings:Tenant}" PolicyId="B2C_1A_TrustFrameworkExtensions" PublicPolicyUri="http://sharethriftb2c.onmicrosoft.com/B2C_1A_TrustFrameworkExtensions" TenantObjectId="961394d2-0a14-4946-9913-6eb4944419af">
+﻿<TrustFrameworkPolicy xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.microsoft.com/online/cpim/schemas/2013/06" PolicySchemaVersion="0.3.0.0" TenantId="your-production-tenant.onmicrosoft.com" PolicyId="B2C_1A_TrustFrameworkExtensions" PublicPolicyUri="http://sharethriftb2c.onmicrosoft.com/B2C_1A_TrustFrameworkExtensions" TenantObjectId="961394d2-0a14-4946-9913-6eb4944419af">
   <BasePolicy>
-    <TenantId>{Settings:Tenant}</TenantId>
+    <TenantId>your-production-tenant.onmicrosoft.com</TenantId>
     <PolicyId>B2C_1A_TrustFrameworkBase</PolicyId>
   </BasePolicy>
   <BuildingBlocks>
@@ -99,12 +99,12 @@
       <TechnicalProfiles>
         <TechnicalProfile Id="login-NonInteractive">
           <Metadata>
-            <Item Key="client_id">{Settings:ProxyIdentityExperienceFrameworkAppId}</Item>
-            <Item Key="IdTokenAudience">{Settings:IdentityExperienceFrameworkAppId}</Item>
+            <Item Key="client_id">Your production environment AD Proxy app Id</Item>
+            <Item Key="IdTokenAudience">Your QA environment AD app Id</Item>
           </Metadata>
           <InputClaims>
-            <InputClaim ClaimTypeReferenceId="client_id" DefaultValue="{Settings:ProxyIdentityExperienceFrameworkAppId}" />
-            <InputClaim ClaimTypeReferenceId="resource_id" PartnerClaimType="resource" DefaultValue="{Settings:IdentityExperienceFrameworkAppId}" />
+            <InputClaim ClaimTypeReferenceId="client_id" DefaultValue="Your production environment AD Proxy app Id" />
+            <InputClaim ClaimTypeReferenceId="resource_id" PartnerClaimType="resource" DefaultValue="Your QA environment AD app Id" />
           </InputClaims>
         </TechnicalProfile>
 				<TechnicalProfile Id="SelfAsserted-LocalAccountSignin-Username">
@@ -173,7 +173,7 @@
       <DisplayName>REST APIs</DisplayName>
       <TechnicalProfiles>
         <TechnicalProfile Id="REST-SignIn">
-          <DisplayName>Retrieve EMSWP role/school data</DisplayName>
+          <DisplayName>Validate user input data and return loyaltyNumber claim</DisplayName>
           <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.RestfulProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
           <Metadata>
             <Item Key="ServiceUrl">https://0c8098eaf273.ngrok.io/api/B2CProfileLookup/logIn</Item>
