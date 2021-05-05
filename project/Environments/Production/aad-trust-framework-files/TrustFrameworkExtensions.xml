@@ -23,6 +23,24 @@
           <Protocol Name="SAML2" PartnerClaimType="http://schemas.microsoft.com/identity/claims/callRestAPI" />
         </DefaultPartnerClaimTypes>
       </ClaimType>
+      <ClaimType Id="expiredOTP">
+        <DisplayName>Validate Email</DisplayName>
+        <DataType>boolean</DataType>
+        <DefaultPartnerClaimTypes>
+          <Protocol Name="OAuth2" PartnerClaimType="expiredOTP" />
+          <Protocol Name="OpenIdConnect" PartnerClaimType="expiredOTP" />
+          <Protocol Name="SAML2" PartnerClaimType="http://schemas.microsoft.com/identity/claims/expiredOTP" />
+        </DefaultPartnerClaimTypes>
+      </ClaimType>
+      <ClaimType Id="originalLogInEmail">
+        <DisplayName>Body Data</DisplayName>
+        <DataType>string</DataType>
+        <DefaultPartnerClaimTypes>
+          <Protocol Name="OAuth2" PartnerClaimType="originalLogInEmail" />
+          <Protocol Name="OpenIdConnect" PartnerClaimType="originalLogInEmail" />
+          <Protocol Name="SAML2" PartnerClaimType="http://schemas.microsoft.com/identity/claims/originalLogInEmail" />
+        </DefaultPartnerClaimTypes>
+      </ClaimType>
       <ClaimType Id="inviteCode">
         <DisplayName>Your Invitation Code</DisplayName>
         <DataType>string</DataType>
@@ -115,6 +133,9 @@
             <InputClaim ClaimTypeReferenceId="client_id" DefaultValue="Your production environment AD Proxy app Id" />
             <InputClaim ClaimTypeReferenceId="resource_id" PartnerClaimType="resource" DefaultValue="Your QA environment AD app Id" />
           </InputClaims>
+          <OutputClaims>
+            <OutputClaim ClaimTypeReferenceId="email" />
+          </OutputClaims>
         </TechnicalProfile>
 				<TechnicalProfile Id="SelfAsserted-LocalAccountSignin-Username">
 					<DisplayName>Username SignIn</DisplayName>
@@ -142,6 +163,34 @@
 					</ValidationTechnicalProfiles>
 					<UseTechnicalProfileForSessionManagement ReferenceId="SM-AAD" />
 				</TechnicalProfile>
+        <!-- This technical profile uses a validation technical profile to authenticate the user. -->
+        <TechnicalProfile Id="SelfAsserted-LocalAccountSignin-Email">
+          <DisplayName>Local Account Signin</DisplayName>
+          <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.SelfAssertedAttributeProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+          <Metadata>
+            <Item Key="SignUpTarget">SignUpWithLogonEmailExchange</Item>
+            <Item Key="setting.operatingMode">Email</Item>
+            <Item Key="ContentDefinitionReferenceId">api.selfasserted</Item>
+          </Metadata>
+          <IncludeInSso>false</IncludeInSso>
+          <InputClaims>
+            <InputClaim ClaimTypeReferenceId="signInName" />
+          </InputClaims>
+          <OutputClaims>
+            <OutputClaim ClaimTypeReferenceId="signInName" Required="true" />
+            <OutputClaim ClaimTypeReferenceId="password" Required="true" />
+            <OutputClaim ClaimTypeReferenceId="objectId" />
+            <OutputClaim ClaimTypeReferenceId="authenticationSource" />
+            <OutputClaim ClaimTypeReferenceId="expiredOTP" />
+            <OutputClaim ClaimTypeReferenceId="originalLogInEmail" />
+            <OutputClaim ClaimTypeReferenceId="email" />
+          </OutputClaims>
+          <ValidationTechnicalProfiles>
+            <ValidationTechnicalProfile ReferenceId="login-NonInteractive" />
+            <ValidationTechnicalProfile ReferenceId="REST-CheckOTPExpiration" />
+          </ValidationTechnicalProfiles>
+          <UseTechnicalProfileForSessionManagement ReferenceId="SM-AAD" />
+        </TechnicalProfile>
 				<TechnicalProfile Id="LocalAccountSignUpWithLogonName">
 					<DisplayName>SignUp With Username</DisplayName>
 					<Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.SelfAssertedAttributeProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
@@ -176,7 +225,7 @@
 					</ValidationTechnicalProfiles>
 					<UseTechnicalProfileForSessionManagement ReferenceId="SM-AAD" />
 				</TechnicalProfile>
-        <TechnicalProfile Id="LocalAccountSignUpWithInvitationCode">
+        <TechnicalProfile Id="LocalAccountSignUpWithEmail">
           <DisplayName>SignUp With Invitation Code</DisplayName>
           <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.SelfAssertedAttributeProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
 					<Metadata>
@@ -196,13 +245,35 @@
             <!--<OutputClaim ClaimTypeReferenceId="displayName"/>
             <OutputClaim ClaimTypeReferenceId="givenName"/>
             <OutputClaim ClaimTypeReferenceId="surName"/>-->
-            <OutputClaim ClaimTypeReferenceId="inviteCode" Required="true"/>
+            <!--<OutputClaim ClaimTypeReferenceId="inviteCode" Required="true"/>-->
             <!-- Required to pass the promoCode returned from "REST-ValidateProfile" 
             to subsequent orchestration steps and token issuance-->
             <!--<OutputClaim ClaimTypeReferenceId="promoCode" />-->
           </OutputClaims>
           <ValidationTechnicalProfiles>
-            <ValidationTechnicalProfile ReferenceId="REST-SignUpInviteCode" />
+            <ValidationTechnicalProfile ReferenceId="REST-SignUpWithEmail" />
+          </ValidationTechnicalProfiles>
+        </TechnicalProfile>
+        <TechnicalProfile Id="ValidateSignInEmail">
+          <DisplayName>SignUp With Invitation Code</DisplayName>
+          <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.SelfAssertedAttributeProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+					<Metadata>
+						<Item Key="IpAddressClaimReferenceId">IpAddress</Item>
+						<Item Key="ContentDefinitionReferenceId">api.localaccountsignup</Item>
+						<Item Key="language.button_continue">Continue</Item>
+					</Metadata>
+					<CryptographicKeys>
+						<Key Id="issuer_secret" StorageReferenceId="B2C_1A_TokenSigningKeyContainer" />
+					</CryptographicKeys>
+          <InputClaims>
+            <InputClaim ClaimTypeReferenceId="originalLogInEmail"/>
+          </InputClaims>
+          <OutputClaims>
+            <!-- Required to present the text box to collect the data from the user -->
+            <OutputClaim ClaimTypeReferenceId="email" PartnerClaimType="Verified.Email" Required="true"/>
+          </OutputClaims>
+          <ValidationTechnicalProfiles>
+            <ValidationTechnicalProfile ReferenceId="REST-ValidateSignInEmail" />
           </ValidationTechnicalProfiles>
         </TechnicalProfile>
       </TechnicalProfiles>
@@ -214,7 +285,7 @@
           <DisplayName>Retrieve EMSWP role/school data</DisplayName>
           <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.RestfulProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
           <Metadata>
-            <Item Key="ServiceUrl">https://64760544905b.ngrok.io/api/B2CProfileLookup/logIn</Item>
+            <Item Key="ServiceUrl">https://0d41a4fcf2c1.ngrok.io/api/B2CProfileLookup/logIn</Item>
             <Item Key="AuthenticationType">Basic</Item>
             <Item Key="SendClaimsIn">Body</Item>
             <Item Key="AllowInsecureAuthInProduction">false</Item>
@@ -237,11 +308,11 @@
           </OutputClaims>
           <UseTechnicalProfileForSessionManagement ReferenceId="SM-Noop" />
         </TechnicalProfile>
-        <TechnicalProfile Id="REST-SignUpInviteCode">
+        <TechnicalProfile Id="REST-SignUpWithEmail">
           <DisplayName>Validate inviatation code</DisplayName>
           <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.RestfulProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
           <Metadata>
-            <Item Key="ServiceUrl">https://60b4cadb4598.ngrok.io/api/B2CProfileLookup/logInWithInvite</Item>
+            <Item Key="ServiceUrl">https://0d41a4fcf2c1.ngrok.io/api/B2CProfileLookup/signUpWithEmail</Item>
             <Item Key="AuthenticationType">Basic</Item>
             <Item Key="SendClaimsIn">Body</Item>
             <Item Key="AllowInsecureAuthInProduction">false</Item>
@@ -252,10 +323,54 @@
           </CryptographicKeys>
           <InputClaims>
             <!-- Claims sent to your REST API -->
-            <InputClaim ClaimTypeReferenceId="inviteCode" />
             <InputClaim ClaimTypeReferenceId="email" />
             <InputClaim ClaimTypeReferenceId="userLanguage" PartnerClaimType="lang" DefaultValue="{Culture:LCID}" AlwaysUseDefaultValue="true" />
           </InputClaims>
+          <UseTechnicalProfileForSessionManagement ReferenceId="SM-Noop" />
+        </TechnicalProfile>
+        <TechnicalProfile Id="REST-ValidateSignInEmail">
+          <DisplayName>Validate inviatation code</DisplayName>
+          <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.RestfulProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+          <Metadata>
+            <Item Key="ServiceUrl">https://0d41a4fcf2c1.ngrok.io/api/B2CProfileLookup/compareSignInEmail</Item>
+            <Item Key="AuthenticationType">Basic</Item>
+            <Item Key="SendClaimsIn">Body</Item>
+            <Item Key="AllowInsecureAuthInProduction">false</Item>
+          </Metadata>
+          <CryptographicKeys>
+            <Key Id="BasicAuthenticationUsername" StorageReferenceId="B2C_1A_RestApiUsername" />
+            <Key Id="BasicAuthenticationPassword" StorageReferenceId="B2C_1A_RestApiPassword" />
+          </CryptographicKeys>
+          <InputClaims>
+            <!-- Claims sent to your REST API -->
+            <InputClaim ClaimTypeReferenceId="originalLogInEmail"/>
+            <InputClaim ClaimTypeReferenceId="email" />
+            <InputClaim ClaimTypeReferenceId="userLanguage" PartnerClaimType="lang" DefaultValue="{Culture:LCID}" AlwaysUseDefaultValue="true" />
+          </InputClaims>
+          <UseTechnicalProfileForSessionManagement ReferenceId="SM-Noop" />
+        </TechnicalProfile>
+        <TechnicalProfile Id="REST-CheckOTPExpiration">
+          <DisplayName>Validate inviatation code</DisplayName>
+          <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.RestfulProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+          <Metadata>
+            <Item Key="ServiceUrl">https://0d41a4fcf2c1.ngrok.io/api/B2CProfileLookup/checkOTPExpiration</Item>
+            <Item Key="AuthenticationType">Basic</Item>
+            <Item Key="SendClaimsIn">Body</Item>
+            <Item Key="AllowInsecureAuthInProduction">false</Item>
+          </Metadata>
+          <CryptographicKeys>
+            <Key Id="BasicAuthenticationUsername" StorageReferenceId="B2C_1A_RestApiUsername" />
+            <Key Id="BasicAuthenticationPassword" StorageReferenceId="B2C_1A_RestApiPassword" />
+          </CryptographicKeys>
+          <InputClaims>
+            <!-- Claims sent to your REST API -->
+            <InputClaim ClaimTypeReferenceId="signInName" />
+            <InputClaim ClaimTypeReferenceId="userLanguage" PartnerClaimType="lang" DefaultValue="{Culture:LCID}" AlwaysUseDefaultValue="true" />
+          </InputClaims>
+          <OutputClaims>
+            <OutputClaim ClaimTypeReferenceId="expiredOTP" />
+            <OutputClaim ClaimTypeReferenceId="originalLogInEmail" />
+          </OutputClaims>
           <UseTechnicalProfileForSessionManagement ReferenceId="SM-Noop" />
         </TechnicalProfile>
       </TechnicalProfiles>
@@ -366,17 +481,24 @@
             </Precondition>
           </Preconditions>
           <ClaimsExchanges>
-            <ClaimsExchange Id="SignUpWithLogonEmailExchange" TechnicalProfileReferenceId="LocalAccountSignUpWithInvitationCode" />
+            <ClaimsExchange Id="SignUpWithLogonEmailExchange" TechnicalProfileReferenceId="LocalAccountSignUpWithEmail" />
           </ClaimsExchanges>
         </OrchestrationStep>
 
-        <!--<OrchestrationStep Order="2" Type="ClaimsExchange">
+        <OrchestrationStep Order="3" Type="ClaimsExchange">
+          <Preconditions>
+            <Precondition Type="ClaimEquals" ExecuteActionsIf="true">
+              <Value>expiredOTP</Value>
+              <Value>False</Value>
+              <Action>SkipThisOrchestrationStep</Action>
+            </Precondition>
+          </Preconditions>
           <ClaimsExchanges>
-            <ClaimsExchange Id="RESTGetProfile" TechnicalProfileReferenceId="REST-SignUpInviteCode" />
+            <ClaimsExchange Id="ValidateSignInEmailExchange" TechnicalProfileReferenceId="ValidateSignInEmail" />
           </ClaimsExchanges>
-        </OrchestrationStep>-->
+        </OrchestrationStep>
 
-        <OrchestrationStep Order="3" Type="SendClaims" CpimIssuerTechnicalProfileReferenceId="JwtIssuer" />
+        <OrchestrationStep Order="4" Type="SendClaims" CpimIssuerTechnicalProfileReferenceId="JwtIssuer" />
 
       </OrchestrationSteps>
     </UserJourney>
