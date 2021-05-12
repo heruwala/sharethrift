@@ -679,7 +679,7 @@
       </OrchestrationSteps>
       <ClientDefinition ReferenceId="DefaultWeb" />
     </UserJourney>
-    <UserJourney Id="SignUpOrSignIn-InviteCode">
+    <UserJourney Id="SignUpOrSignIn-OTP">
       <OrchestrationSteps>
 
         <OrchestrationStep Order="1"
