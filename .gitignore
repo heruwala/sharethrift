@@ -1,14 +1,3 @@
 ui/.env
 ui/debug.log
-project/Environments/Development/aad-trust-framework-files/SignUpOrSignInWithOTP.xml
-project/Environments/Development/aad-trust-framework-files/TestInvitationCodeFlow.xml
-project/Environments/Development/aad-trust-framework-files/TrustFrameworkExtensions.xml
-project/Environments/Production/aad-trust-framework-files/SignUpOrSignInWithOTP.xml
-project/Environments/Production/aad-trust-framework-files/TestInvitationCodeFlow.xml
-project/Environments/Production/aad-trust-framework-files/TrustFrameworkExtensions.xml
-project/Environments/QA/aad-trust-framework-files/SignUpOrSignInWithOTP.xml
-project/Environments/QA/aad-trust-framework-files/TestInvitationCodeFlow.xml
-project/Environments/QA/aad-trust-framework-files/TrustFrameworkExtensions.xml
-project/Environments/sharethriftb2c/aad-trust-framework-files/SignUpOrSignInWithOTP.xml
-project/Environments/sharethriftb2c/aad-trust-framework-files/TestInvitationCodeFlow.xml
-project/Environments/sharethriftb2c/aad-trust-framework-files/TrustFrameworkExtensions.xml
+project/Environments/*
