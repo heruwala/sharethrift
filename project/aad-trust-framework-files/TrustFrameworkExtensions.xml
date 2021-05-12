@@ -60,11 +60,6 @@
             PartnerClaimType="http://schemas.microsoft.com/identity/claims/originalLogInEmail" />
         </DefaultPartnerClaimTypes>
       </ClaimType>
-      <ClaimType Id="inviteCode">
-        <DisplayName>Your Invitation Code</DisplayName>
-        <DataType>string</DataType>
-        <UserInputType>TextBox</UserInputType>
-      </ClaimType>
       <ClaimType Id="userLanguage">
         <DisplayName>User UI language (used by REST API to return localized error messages)</DisplayName>
         <DataType>string</DataType>
@@ -348,7 +343,7 @@
           <UseTechnicalProfileForSessionManagement ReferenceId="SM-AAD" />
         </TechnicalProfile>
         <TechnicalProfile Id="LocalAccountSignUpWithEmail">
-          <DisplayName>SignUp With Invitation Code</DisplayName>
+          <DisplayName>SignUp With Email</DisplayName>
           <Protocol Name="Proprietary"
             Handler="Web.TPEngine.Providers.SelfAssertedAttributeProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
           <Metadata>
@@ -374,7 +369,6 @@
             <!--<OutputClaim ClaimTypeReferenceId="displayName"/>
             <OutputClaim ClaimTypeReferenceId="givenName"/>
             <OutputClaim ClaimTypeReferenceId="surName"/>-->
-            <!--<OutputClaim ClaimTypeReferenceId="inviteCode" Required="true"/>-->
             <!-- Required to pass the promoCode returned from "REST-ValidateProfile" 
             to subsequent orchestration steps and token issuance-->
             <!--<OutputClaim ClaimTypeReferenceId="promoCode" />-->
@@ -384,7 +378,7 @@
           </ValidationTechnicalProfiles>
         </TechnicalProfile>
         <TechnicalProfile Id="ValidateSignInEmail">
-          <DisplayName>SignUp With Invitation Code</DisplayName>
+          <DisplayName>Validate SignIn Email</DisplayName>
           <Protocol Name="Proprietary"
             Handler="Web.TPEngine.Providers.SelfAssertedAttributeProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
           <Metadata>
