@@ -259,6 +259,8 @@
               Required="true" />
             <OutputClaim ClaimTypeReferenceId="password"
               Required="true" />
+            <OutputClaim ClaimTypeReferenceId="givenName" />
+            <OutputClaim ClaimTypeReferenceId="surname" />
             <OutputClaim ClaimTypeReferenceId="objectId" />
             <OutputClaim ClaimTypeReferenceId="authenticationSource" />
             <OutputClaim ClaimTypeReferenceId="bodyData" />
@@ -289,6 +291,9 @@
               Required="true" />
             <OutputClaim ClaimTypeReferenceId="password"
               Required="true" />
+            <OutputClaim ClaimTypeReferenceId="givenName" />
+            <OutputClaim ClaimTypeReferenceId="surname" />
+            <OutputClaim ClaimTypeReferenceId="signInNames.emailAddress" />
             <OutputClaim ClaimTypeReferenceId="objectId" />
             <OutputClaim ClaimTypeReferenceId="authenticationSource" />
             <OutputClaim ClaimTypeReferenceId="expiredOTP" />

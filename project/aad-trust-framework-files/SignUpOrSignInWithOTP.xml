@@ -16,9 +16,7 @@
         <OutputClaim ClaimTypeReferenceId="displayName" DefaultValue=""/>
         <OutputClaim ClaimTypeReferenceId="givenName" />
         <OutputClaim ClaimTypeReferenceId="surname" />
-        <OutputClaim ClaimTypeReferenceId="signInNames.phoneNumber" />
         <OutputClaim ClaimTypeReferenceId="signInNames.emailAddress" />
-        <OutputClaim ClaimTypeReferenceId="strongAuthenticationEmailAddress" />
         <OutputClaim ClaimTypeReferenceId="objectId" PartnerClaimType="sub" />
         <OutputClaim ClaimTypeReferenceId="tenantId" AlwaysUseDefaultValue="true" DefaultValue="{Policy:TenantObjectId}" />
       </OutputClaims>
