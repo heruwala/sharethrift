@@ -77,6 +77,19 @@
         <UserInputType>TextBox</UserInputType>
       </ClaimType>
 
+      <!-- password reset -->
+      <ClaimType Id="isForgotPassword">
+        <DisplayName>isForgotPassword</DisplayName>
+        <DataType>boolean</DataType>
+        <AdminHelpText>Whether the user has selected Forgot your Password</AdminHelpText>
+      </ClaimType>
+
+      <ClaimType Id="isNewUser">
+        <DisplayName>isNewUser</DisplayName>
+        <DataType>boolean</DataType>
+        <AdminHelpText>Determines whether save OID logic should be invoked</AdminHelpText>
+      </ClaimType>
+
     </ClaimsSchema>
     <ContentDefinitions>
       <ContentDefinition Id="api.error">
@@ -118,6 +131,20 @@
         </LocalizedResourcesReferences>
 
       </ContentDefinition>
+      <ContentDefinition Id="api.signuporsignin-username">
+        <LoadUri>{Settings:LoginURL}</LoadUri>
+        <RecoveryUri>~/common/default_page_error.html</RecoveryUri>
+        <DataUri>urn:com:microsoft:aad:b2c:elements:contract:unifiedssp:2.1.4</DataUri>
+        <Metadata>
+          <Item Key="DisplayName">Signin and Signup</Item>
+        </Metadata>
+        <LocalizedResourcesReferences MergeBehavior="Prepend">
+          <LocalizedResourcesReference Language="en"
+            LocalizedResourcesReferenceId="api.signuporsignin-username.en" />
+        </LocalizedResourcesReferences>
+
+      </ContentDefinition>
+      
       <ContentDefinition Id="api.selfasserted">
         <LoadUri>~/tenant/templates/AzureBlue/selfAsserted.cshtml</LoadUri>
         <RecoveryUri>~/common/default_page_error.html</RecoveryUri>
@@ -173,6 +200,12 @@
             StringId="createaccount_one_link">Register now?</LocalizedString>
           <LocalizedString ElementType="UxElement"
             StringId="local_intro_generic">Sign in with your email</LocalizedString>
+        </LocalizedStrings>
+      </LocalizedResources>
+      <LocalizedResources Id="api.signuporsignin-username.en">
+        <LocalizedStrings>
+          <LocalizedString ElementType="UxElement"
+            StringId="local_intro_generic">Sign in with your EMSWP Username &amp; Password</LocalizedString>
         </LocalizedStrings>
       </LocalizedResources>
     </Localization>
@@ -244,6 +277,8 @@
             <Item Key="SignUpTarget">SignUpWithLogonUsernameExchange</Item>
             <Item Key="setting.operatingMode">Username</Item>
             <Item Key="ContentDefinitionReferenceId">api.selfasserted</Item>
+            <Item Key="setting.forgotPasswordLinkLocation">None</Item>
+            <Item Key="setting.showSignupLink">false</Item>
           </Metadata>
           <IncludeInSso>false</IncludeInSso>
           <InputClaims>
@@ -267,6 +302,19 @@
           </ValidationTechnicalProfiles>
           <UseTechnicalProfileForSessionManagement ReferenceId="SM-AAD" />
         </TechnicalProfile>
+
+        <!-- password reset -->
+        <TechnicalProfile Id="ForgotPassword">
+          <DisplayName>Forgot your password?</DisplayName>
+          <Protocol Name="Proprietary"
+            Handler="Web.TPEngine.Providers.ClaimsTransformationProtocolProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"/>
+          <OutputClaims>
+            <OutputClaim ClaimTypeReferenceId="isForgotPassword"
+              DefaultValue="true"
+              AlwaysUseDefaultValue="true"/>
+          </OutputClaims>
+        </TechnicalProfile>
+
         <!-- This technical profile uses a validation technical profile to authenticate the user. -->
         <TechnicalProfile Id="SelfAsserted-LocalAccountSignin-Email">
           <DisplayName>Local Account Signin</DisplayName>
@@ -276,6 +324,7 @@
             <Item Key="SignUpTarget">SignUpWithLogonEmailExchange</Item>
             <Item Key="setting.operatingMode">Email</Item>
             <Item Key="ContentDefinitionReferenceId">api.selfasserted</Item>
+            <Item Key="setting.forgotPasswordLinkOverride">ForgotPasswordExchange</Item>
           </Metadata>
           <IncludeInSso>false</IncludeInSso>
           <InputClaims>
@@ -372,6 +421,7 @@
               Required="true"/>
             <OutputClaim ClaimTypeReferenceId="expiredOTP" />
             <OutputClaim ClaimTypeReferenceId="objectId" />
+            <OutputClaim ClaimTypeReferenceId="isNewUser" DefaultValue="true" AlwaysUseDefaultValue="true"/>
             <!--<OutputClaim ClaimTypeReferenceId="displayName"/>
             <OutputClaim ClaimTypeReferenceId="givenName"/>
             <OutputClaim ClaimTypeReferenceId="surName"/>-->
@@ -655,7 +705,7 @@
 
         <OrchestrationStep Order="1"
           Type="CombinedSignInAndSignUp"
-          ContentDefinitionReferenceId="api.signuporsignin">
+          ContentDefinitionReferenceId="api.signuporsignin-username">
           <ClaimsProviderSelections>
             <ClaimsProviderSelection ValidationClaimsExchangeId="LocalAccountSigninEmailExchange" />
           </ClaimsProviderSelections>
@@ -720,6 +770,7 @@
           ContentDefinitionReferenceId="api.signuporsignin">
           <ClaimsProviderSelections>
             <ClaimsProviderSelection ValidationClaimsExchangeId="LocalAccountSigninEmailExchange" />
+            <ClaimsProviderSelection TargetClaimsExchangeId="ForgotPasswordExchange" />
           </ClaimsProviderSelections>
           <ClaimsExchanges>
             <ClaimsExchange Id="LocalAccountSigninEmailExchange"
@@ -739,10 +790,26 @@
           <ClaimsExchanges>
             <ClaimsExchange Id="SignUpWithLogonEmailExchange"
               TechnicalProfileReferenceId="LocalAccountSignUpWithEmail" />
+            <ClaimsExchange Id="ForgotPasswordExchange"
+              TechnicalProfileReferenceId="ForgotPassword" />
           </ClaimsExchanges>
         </OrchestrationStep>
 
         <OrchestrationStep Order="3"
+          Type="InvokeSubJourney">
+          <Preconditions>
+            <Precondition Type="ClaimsExist"
+              ExecuteActionsIf="false">
+              <Value>isForgotPassword</Value>
+              <Action>SkipThisOrchestrationStep</Action>
+            </Precondition>
+          </Preconditions>
+          <JourneyList>
+            <Candidate SubJourneyReferenceId="PasswordReset" />
+          </JourneyList>
+        </OrchestrationStep>
+
+        <OrchestrationStep Order="4"
           Type="ClaimsExchange">
           <Preconditions>
             <Precondition Type="ClaimsExist"
@@ -763,19 +830,49 @@
           </ClaimsExchanges>
         </OrchestrationStep>
 
-        <OrchestrationStep Order="4"
+        <OrchestrationStep Order="5"
           Type="ClaimsExchange">
+          <Preconditions>
+            <Precondition Type="ClaimsExist" ExecuteActionsIf="false">
+              <Value>isNewUser</Value>
+              <Action>SkipThisOrchestrationStep</Action>
+            </Precondition>
+          </Preconditions>
           <ClaimsExchanges> 
             <ClaimsExchange Id="SaveNewUserOID"
               TechnicalProfileReferenceId="REST-SaveNewUserOID" />
           </ClaimsExchanges>
         </OrchestrationStep>
 
-        <OrchestrationStep Order="5"
+        <OrchestrationStep Order="6"
           Type="SendClaims"
           CpimIssuerTechnicalProfileReferenceId="JwtIssuer" />
 
       </OrchestrationSteps>
     </UserJourney>
   </UserJourneys>
+  <SubJourneys>
+    <SubJourney Id="PasswordReset"
+      Type="Call">
+      <OrchestrationSteps>
+        <!-- Validate user's email address. -->
+        <OrchestrationStep Order="1"
+          Type="ClaimsExchange">
+          <ClaimsExchanges>
+            <ClaimsExchange Id="PasswordResetUsingEmailAddressExchange"
+              TechnicalProfileReferenceId="LocalAccountDiscoveryUsingEmailAddress" />
+          </ClaimsExchanges>
+        </OrchestrationStep>
+
+        <!-- Collect and persist a new password. -->
+        <OrchestrationStep Order="2"
+          Type="ClaimsExchange">
+          <ClaimsExchanges>
+            <ClaimsExchange Id="NewCredentials"
+              TechnicalProfileReferenceId="LocalAccountWritePasswordUsingObjectId" />
+          </ClaimsExchanges>
+        </OrchestrationStep>
+      </OrchestrationSteps>
+    </SubJourney>
+  </SubJourneys>
 </TrustFrameworkPolicy>
