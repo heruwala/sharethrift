@@ -550,7 +550,7 @@
           <UseTechnicalProfileForSessionManagement ReferenceId="SM-Noop" />
         </TechnicalProfile>
         <TechnicalProfile Id="REST-CheckOTPExpiration">
-          <DisplayName>Validate inviatation code</DisplayName>
+          <DisplayName>Check if OTP expired</DisplayName>
           <Protocol Name="Proprietary"
             Handler="Web.TPEngine.Providers.RestfulProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
           <Metadata>
@@ -577,6 +577,29 @@
             <OutputClaim ClaimTypeReferenceId="expiredOTP" />
             <OutputClaim ClaimTypeReferenceId="originalLogInEmail" />
           </OutputClaims>
+          <UseTechnicalProfileForSessionManagement ReferenceId="SM-Noop" />
+        </TechnicalProfile>
+        <TechnicalProfile Id="REST-SaveNewUserOID">
+          <DisplayName>Check if OTP expired</DisplayName>
+          <Protocol Name="Proprietary"
+            Handler="Web.TPEngine.Providers.RestfulProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+          <Metadata>
+            <Item Key="ServiceUrl">{Settings:HostURL}/api/B2CProfileLookup/saveNewUserOID</Item>
+            <Item Key="AuthenticationType">Basic</Item>
+            <Item Key="SendClaimsIn">Body</Item>
+            <Item Key="AllowInsecureAuthInProduction">false</Item>
+          </Metadata>
+          <CryptographicKeys>
+            <Key Id="BasicAuthenticationUsername"
+              StorageReferenceId="B2C_1A_RestApiUsername" />
+            <Key Id="BasicAuthenticationPassword"
+              StorageReferenceId="B2C_1A_RestApiPassword" />
+          </CryptographicKeys>
+          <InputClaims>
+            <!-- Claims sent to your REST API -->
+            <InputClaim ClaimTypeReferenceId="email" />
+            <InputClaim ClaimTypeReferenceId="objectId" />
+          </InputClaims>
           <UseTechnicalProfileForSessionManagement ReferenceId="SM-Noop" />
         </TechnicalProfile>
       </TechnicalProfiles>
@@ -741,6 +764,14 @@
         </OrchestrationStep>
 
         <OrchestrationStep Order="4"
+          Type="ClaimsExchange">
+          <ClaimsExchanges> 
+            <ClaimsExchange Id="SaveNewUserOID"
+              TechnicalProfileReferenceId="REST-SaveNewUserOID" />
+          </ClaimsExchanges>
+        </OrchestrationStep>
+
+        <OrchestrationStep Order="5"
           Type="SendClaims"
           CpimIssuerTechnicalProfileReferenceId="JwtIssuer" />
 
