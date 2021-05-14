@@ -106,7 +106,7 @@
         </Metadata>
       </ContentDefinition>
       <ContentDefinition Id="api.signuporsignin">
-        <LoadUri>https://sharethrift.blob.core.windows.net/root/login.html</LoadUri>
+        <LoadUri>{Settings:LoginURL}</LoadUri>
         <RecoveryUri>~/common/default_page_error.html</RecoveryUri>
         <DataUri>urn:com:microsoft:aad:b2c:elements:contract:unifiedssp:2.1.4</DataUri>
         <Metadata>
