@@ -197,7 +197,7 @@
       <LocalizedResources Id="api.signuporsignin.en">
         <LocalizedStrings>
           <LocalizedString ElementType="UxElement"
-            StringId="createaccount_one_link">Register now?</LocalizedString>
+            StringId="createaccount_one_link">Register now</LocalizedString>
           <LocalizedString ElementType="UxElement"
             StringId="local_intro_generic">Sign in with your email</LocalizedString>
         </LocalizedStrings>
@@ -206,6 +206,8 @@
         <LocalizedStrings>
           <LocalizedString ElementType="UxElement"
             StringId="local_intro_generic">Sign in with your EMSWP Username &amp; Password</LocalizedString>
+          <LocalizedString ElementType="ErrorMessage" StringId="UserMessageIfClaimsPrincipalDoesNotExist">The username or password provided in the request are invalid.</LocalizedString>
+          <LocalizedString ElementType="ErrorMessage" StringId="UserMessageIfInvalidPassword">The username or password provided in the request are invalid.</LocalizedString>
         </LocalizedStrings>
       </LocalizedResources>
     </Localization>
