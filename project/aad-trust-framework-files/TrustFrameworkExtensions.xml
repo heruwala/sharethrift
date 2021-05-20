@@ -4,7 +4,7 @@
   PolicySchemaVersion="0.3.0.0"
   TenantId="{Settings:Tenant}"
   PolicyId="B2C_1A_TrustFrameworkExtensions"
-  PublicPolicyUri="http://sharethriftb2c.onmicrosoft.com/B2C_1A_TrustFrameworkExtensions"
+  PublicPolicyUri="http://{Settings:Tenant}/B2C_1A_TrustFrameworkExtensions"
   TenantObjectId="961394d2-0a14-4946-9913-6eb4944419af">
   <BasePolicy>
     <TenantId>{Settings:Tenant}</TenantId>
