@@ -345,6 +345,7 @@
             <OutputClaim ClaimTypeReferenceId="expiredOTP" />
             <OutputClaim ClaimTypeReferenceId="originalLogInEmail" />
             <OutputClaim ClaimTypeReferenceId="email" />
+            <OutputClaim ClaimTypeReferenceId="bodyData" />
           </OutputClaims>
           <ValidationTechnicalProfiles>
             <ValidationTechnicalProfile ReferenceId="login-NonInteractive" />
@@ -423,6 +424,7 @@
               Required="true"/>
             <OutputClaim ClaimTypeReferenceId="expiredOTP" />
             <OutputClaim ClaimTypeReferenceId="objectId" />
+            <OutputClaim ClaimTypeReferenceId="bodyData" />
             <OutputClaim ClaimTypeReferenceId="isNewUser" DefaultValue="true" AlwaysUseDefaultValue="true"/>
             <!--<OutputClaim ClaimTypeReferenceId="displayName"/>
             <OutputClaim ClaimTypeReferenceId="givenName"/>
@@ -566,6 +568,7 @@
           </InputClaims>
           <OutputClaims>
             <OutputClaim ClaimTypeReferenceId="expiredOTP" />
+            <OutputClaim ClaimTypeReferenceId="bodyData" />
           </OutputClaims>
           <UseTechnicalProfileForSessionManagement ReferenceId="SM-Noop" />
         </TechnicalProfile>
@@ -628,6 +631,7 @@
           <OutputClaims>
             <OutputClaim ClaimTypeReferenceId="expiredOTP" />
             <OutputClaim ClaimTypeReferenceId="originalLogInEmail" />
+            <OutputClaim ClaimTypeReferenceId="bodyData" />
           </OutputClaims>
           <UseTechnicalProfileForSessionManagement ReferenceId="SM-Noop" />
         </TechnicalProfile>
