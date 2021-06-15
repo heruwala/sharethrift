@@ -36,16 +36,16 @@
             PartnerClaimType="http://schemas.microsoft.com/identity/claims/callRestAPI" />
         </DefaultPartnerClaimTypes>
       </ClaimType>
-      <ClaimType Id="expiredOTP">
+      <ClaimType Id="physicianAccountVerified">
         <DisplayName>Validate Email</DisplayName>
         <DataType>boolean</DataType>
         <DefaultPartnerClaimTypes>
           <Protocol Name="OAuth2"
-            PartnerClaimType="expiredOTP" />
+            PartnerClaimType="physicianAccountVerified" />
           <Protocol Name="OpenIdConnect"
-            PartnerClaimType="expiredOTP" />
+            PartnerClaimType="physicianAccountVerified" />
           <Protocol Name="SAML2"
-            PartnerClaimType="http://schemas.microsoft.com/identity/claims/expiredOTP" />
+            PartnerClaimType="http://schemas.microsoft.com/identity/claims/physicianAccountVerified" />
         </DefaultPartnerClaimTypes>
       </ClaimType>
       <ClaimType Id="originalLogInEmail">
@@ -342,7 +342,7 @@
             <OutputClaim ClaimTypeReferenceId="signInNames.emailAddress" />
             <OutputClaim ClaimTypeReferenceId="objectId" />
             <OutputClaim ClaimTypeReferenceId="authenticationSource" />
-            <OutputClaim ClaimTypeReferenceId="expiredOTP" />
+            <OutputClaim ClaimTypeReferenceId="physicianAccountVerified" />
             <OutputClaim ClaimTypeReferenceId="originalLogInEmail" />
             <OutputClaim ClaimTypeReferenceId="email" />
             <OutputClaim ClaimTypeReferenceId="bodyData" />
@@ -422,7 +422,7 @@
               Required="true"/>
             <OutputClaim ClaimTypeReferenceId="reenterPassword"
               Required="true"/>
-            <OutputClaim ClaimTypeReferenceId="expiredOTP" />
+            <OutputClaim ClaimTypeReferenceId="physicianAccountVerified" />
             <OutputClaim ClaimTypeReferenceId="objectId" />
             <OutputClaim ClaimTypeReferenceId="bodyData" />
             <OutputClaim ClaimTypeReferenceId="isNewUser" DefaultValue="true" AlwaysUseDefaultValue="true"/>
@@ -567,7 +567,7 @@
             <InputClaim ClaimTypeReferenceId="objectId"/>
           </InputClaims>
           <OutputClaims>
-            <OutputClaim ClaimTypeReferenceId="expiredOTP" />
+            <OutputClaim ClaimTypeReferenceId="physicianAccountVerified" />
             <OutputClaim ClaimTypeReferenceId="bodyData" />
           </OutputClaims>
           <UseTechnicalProfileForSessionManagement ReferenceId="SM-Noop" />
@@ -627,9 +627,11 @@
               PartnerClaimType="lang"
               DefaultValue="{Culture:LCID}"
               AlwaysUseDefaultValue="true" />
+            <InputClaim ClaimTypeReferenceId="objectId"
+              PartnerClaimType="oid" />
           </InputClaims>
           <OutputClaims>
-            <OutputClaim ClaimTypeReferenceId="expiredOTP" />
+            <OutputClaim ClaimTypeReferenceId="physicianAccountVerified" />
             <OutputClaim ClaimTypeReferenceId="originalLogInEmail" />
             <OutputClaim ClaimTypeReferenceId="bodyData" />
           </OutputClaims>
@@ -820,13 +822,13 @@
           <Preconditions>
             <Precondition Type="ClaimsExist"
               ExecuteActionsIf="false">
-              <Value>expiredOTP</Value>
+              <Value>physicianAccountVerified</Value>
               <Action>SkipThisOrchestrationStep</Action>
             </Precondition>
             <Precondition Type="ClaimEquals"
               ExecuteActionsIf="true">
-              <Value>expiredOTP</Value>
-              <Value>False</Value>
+              <Value>physicianAccountVerified</Value>
+              <Value>True</Value>
               <Action>SkipThisOrchestrationStep</Action>
             </Precondition>
           </Preconditions>
