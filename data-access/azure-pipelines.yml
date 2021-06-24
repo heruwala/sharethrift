@@ -11,7 +11,10 @@ trigger:
    include:
      - main
 
-pr: none
+pr:
+  branches:
+    include:
+      - main
   
 variables:
 
@@ -96,7 +99,7 @@ stages:
 - stage: Deploy
   displayName: Deploy stage
   dependsOn: Build
-  condition: succeeded()
+  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
   jobs:
   - deployment: Deploy
     displayName: Deploy
