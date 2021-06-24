@@ -81,7 +81,7 @@ function App() {
           >
             Get Auth Result
           </button>
-          <button onClick={() => getServerTime()}>Get Server Time</button>
+          <button onClick={() => getServerTime()}>Click to Get Server Time</button>
         </p>
         <HelloWorld />
         <a
