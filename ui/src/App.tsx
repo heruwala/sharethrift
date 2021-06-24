@@ -13,14 +13,6 @@ const GET_SERVER_TIME = gql`
   }
 `;
 
-/*
-const GET_SERVER_TIME = gql`
-  mutation {
-    getServerTime
-  }
-`;
-*/
-
 function App() {
   const { login, logout, getAuthToken, getAuthResult, isLoggedIn } = useMsal();
   const [userName, setUsername] = React.useState<string>("");
