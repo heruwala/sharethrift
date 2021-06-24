@@ -52,6 +52,7 @@ stages:
       inputs:
         pollingTimeoutSec: '300'
     - task: PublishBuildArtifacts@1
+      condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
       inputs:
         PathtoPublish: '$(Build.ArtifactStagingDirectory)'
         ArtifactName: 'www'
