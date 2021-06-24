@@ -25,6 +25,7 @@ stages:
     displayName: Build Job
     steps:
     - task: SonarCloudPrepare@1
+      displayName: 'SonarCloud: Prepare analysis configuration'
       inputs:
         SonarCloud: 'sonarcloud'
         organization: 'simnova'
@@ -45,7 +46,9 @@ stages:
           REACT_APP_AAD_REDIRECT_URI: $(REACT_APP_AAD_REDIRECT_URI)
           REACT_APP_AAD_SCOPES: $(REACT_APP_AAD_SCOPES)
     - task: SonarCloudAnalyze@1
+      displayName: 'SonarCloud: Run analysis'
     - task: SonarCloudPublish@1
+      displayName: 'SounarCloud: Publish results on build summary'
       inputs:
         pollingTimeoutSec: '300'
     - task: PublishBuildArtifacts@1
