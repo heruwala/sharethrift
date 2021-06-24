@@ -22,13 +22,7 @@ interface CreateAccountDetails {
   description: string | undefined
 }
 
-/* pr test
-interface CreateAccountDetails {
-  firstName: string | undefined,
-  lastName: string | undefined,
-  description: string | undefined
-}
-*/
+
 
 
 const HelloWorld: FC<any> = () => {

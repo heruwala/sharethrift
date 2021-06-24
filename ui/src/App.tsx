@@ -12,6 +12,13 @@ const GET_SERVER_TIME = gql`
     getServerTime
   }
 `;
+/* hoping for sonarlint break
+interface CreateAccountDetails {
+  firstName: string | undefined,
+  lastName: string | undefined,
+  description: string | undefined
+}
+*/
 
 function App() {
   const { login, logout, getAuthToken, getAuthResult, isLoggedIn } = useMsal();
