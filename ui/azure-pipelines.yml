@@ -13,6 +13,7 @@ pr:
   
 variables:
     system.debug: true
+    npm_config_cache: $(Pipeline.Workspace)/.npm
 
 pool:
   vmImage: 'ubuntu-latest'
@@ -52,12 +53,14 @@ stages:
         buildPath: 'ui'
         archivePath: 'ui/build'
         archiveName: 'prod'
+        npmConfigCache: $(npm_config_cache)
         buildEnvSettings:
           INLINE_RUNTIME_CHUNK: 'false'
           REACT_APP_AAD_APP_CLIENTID: $(REACT_APP_AAD_APP_CLIENTID)
           REACT_APP_AAD_DIRECTORY_TENANTID: $(REACT_APP_AAD_DIRECTORY_TENANTID)
           REACT_APP_AAD_REDIRECT_URI: $(REACT_APP_AAD_REDIRECT_URI)
           REACT_APP_AAD_SCOPES: $(REACT_APP_AAD_SCOPES)
+          
     - task: SonarCloudAnalyze@1
       displayName: 'SonarCloud: Run analysis'
     - task: SonarCloudPublish@1
