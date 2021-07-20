@@ -24,6 +24,11 @@ resources:
       name: ECFMG/azure-pipelines-yaml
       ref: 'refs/heads/main'
       endpoint: 'simnova (1)'
+    - repository: templates2
+      type: github
+      name: microsoft/azure-pipelines-yaml
+      ref: 'refs/heads/master'
+      endpoint: 'simnova (1)'
 
 stages:
 - stage: build_stage
