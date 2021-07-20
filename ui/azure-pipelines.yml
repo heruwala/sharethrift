@@ -24,9 +24,6 @@ resources:
       name: ECFMG/azure-pipelines-yaml
       ref: 'refs/heads/main'
       endpoint: $(GITHUB_CONNECTION)
-    - repository: templates2
-      type: github
-      name: microsoft/azure-pipelines-yaml
 
 stages:
 - stage: build_stage
