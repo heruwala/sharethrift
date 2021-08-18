@@ -24,4 +24,3 @@ Bold.args = {
   className: 'bold',
   children: 'Bold'
 };
-

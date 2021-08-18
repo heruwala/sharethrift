@@ -70,6 +70,7 @@
     "@storybook/preset-create-react-app": "^3.2.0",
     "@storybook/react": "^6.3.7",
     "@storybook/theming": "^6.3.7",
-    "chromatic": "^5.9.2"
+    "chromatic": "^5.9.2",
+    "storybook-zeplin": "^1.5.1"
   }
 }
