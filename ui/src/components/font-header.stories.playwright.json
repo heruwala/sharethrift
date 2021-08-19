@@ -1,0 +1,21 @@
+{
+  "version": "4",
+  "stories": {
+    "documentation-core-typography-header--h-1": {
+      "actionSets": [
+        {
+          "actions": [
+            {
+              "name": "click",
+              "args": {
+                "selector": "//h1"
+              }
+            }
+          ],
+          "id": "aoFyXgM0c-fe",
+          "title": "Click"
+        }
+      ]
+    }
+  }
+}

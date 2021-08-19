@@ -64,6 +64,7 @@
   "devDependencies": {
     "@storybook/addon-actions": "^6.3.7",
     "@storybook/addon-essentials": "^6.3.7",
+    "@storybook/addon-knobs": "^6.3.0",
     "@storybook/addon-links": "^6.3.7",
     "@storybook/addons": "^6.3.7",
     "@storybook/node-logger": "^6.3.7",
@@ -71,6 +72,7 @@
     "@storybook/react": "^6.3.7",
     "@storybook/theming": "^6.3.7",
     "chromatic": "^5.9.2",
+    "storybook-addon-playwright": "^4.6.4",
     "storybook-zeplin": "^1.5.1"
   }
 }
